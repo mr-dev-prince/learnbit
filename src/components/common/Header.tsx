@@ -1,11 +1,24 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Bell, MoonStar, Search, SunMedium } from 'lucide-react';
 import { useTheme } from '@/components/providers/ThemeProvider';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  email: string;
+  fullName: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
   const { theme, toggleTheme } = useTheme();
+  const displayName = fullName.trim() || email;
+  const initials = displayName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
 
   return (
     <header
@@ -52,7 +65,8 @@ const Header: React.FC = () => {
 
           <div className="h-6 w-px bg-border" />
 
-          <button
+          <Link
+            href="/settings"
             className="flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-surface/80"
             style={{ color: 'var(--foreground)' }}
             aria-label="User profile"
@@ -61,10 +75,13 @@ const Header: React.FC = () => {
               className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold"
               style={{ backgroundColor: 'var(--primary)' }}
             >
-              U
+              {initials || 'U'}
             </div>
-            <span className="text-sm font-medium hidden sm:inline">User</span>
-          </button>
+            <div className="hidden sm:block">
+              <span className="block text-sm font-medium">{displayName}</span>
+              <span className="block text-xs opacity-65">{email}</span>
+            </div>
+          </Link>
         </div>
       </div>
     </header>

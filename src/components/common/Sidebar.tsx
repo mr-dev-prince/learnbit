@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus } from 'lucide-react';
-import CollapseButton from '@/components/common/CollapseButton';
-import QuickAddModal from '@/components/common/QuickAddModal';
+import LogoutButton from '@/components/auth/LogoutButton';
+import CollapseButton from '@/components/ui/CollapseButton';
+import QuickAddModal from '@/components/ui/QuickAddModal';
 
 interface NavItem {
   id: string;
@@ -44,32 +45,37 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <aside
-        className={`fixed left-0 top-0 z-30 h-screen shadow-md transition-all duration-300 ease-in-out flex flex-col ${
+      <div
+        className={`hidden h-screen shrink-0 transition-all duration-300 ease-in-out md:block ${
           isCollapsed ? 'w-20' : 'w-56'
-        } bg-(--sidebar-header-background) backdrop-blur-xl md:relative md:translate-x-0`}
+        }`}
+      />
+      <aside
+        className={`fixed left-0 top-0 z-30 flex h-screen flex-col shadow-md transition-all duration-300 ease-in-out ${
+          isCollapsed ? 'w-20' : 'w-56'
+        } bg-(--sidebar-header-background) backdrop-blur-xl`}
         style={{ borderRightColor: 'var(--border)' }}
       >
         <div
-          className="flex items-center justify-between p-4"
+          className="flex items-center justify-between p-6"
           style={{ borderBottomColor: 'var(--border)' }}
         >
           {!isCollapsed && (
             <div className="flex items-center gap-3 justify-start">
               <p
-                className="text-4xl leading-none font-black"
+                className="text-5xl leading-none font-black"
                 style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
               >
-                learn<span className="text-orange-600 leading-none font-black">bit.</span>
+                learn<span className="text-orange-600 text-5xl leading-none font-black">bit.</span>
               </p>
             </div>
           )}
           {isCollapsed && (
             <span
-              className="mx-auto text-4xl font-black leading-none"
+              className="mx-auto text-5xl font-black leading-none"
               style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
             >
-              l<span className="text-orange-600 text-4xl font-black leading-none">b.</span>
+              l<span className="text-orange-600 text-5xl font-black leading-none">b.</span>
             </span>
           )}
         </div>
@@ -82,9 +88,7 @@ const Sidebar: React.FC = () => {
                 key={item.id}
                 href={item.href}
                 className={`group relative flex items-center ${isCollapsed ? 'justify-center' : ''} gap-3 p-3 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-primary/20'
-                    : 'hover:bg-primary/10 hover:text-foreground'
+                  isActive ? 'bg-primary/20' : 'hover:bg-primary/10 hover:text-foreground'
                 }`}
                 style={{ color: 'var(--foreground)' }}
                 title={isCollapsed ? item.label : undefined}
@@ -131,6 +135,10 @@ const Sidebar: React.FC = () => {
             <Plus size={20} />
             {!isCollapsed && <span>Quick Add</span>}
           </button>
+          <LogoutButton
+            compact={isCollapsed}
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors hover:bg-surface/70"
+          />
         </div>
       </aside>
 
