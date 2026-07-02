@@ -3,11 +3,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #5C6BC0;
+  --secondary: #81C784;
+  --tertiary: #FFB74D;
+  --neutral: #F8F9FA;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-neutral: var(--neutral);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
