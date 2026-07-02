@@ -41,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 oauth-consent-screen.json*.dmg
+oauth-consent-screen.json
