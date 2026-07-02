@@ -1,26 +1,23 @@
-import { NextResponse } from 'next/server';
-import { runDatabaseHealthCheck } from '@/lib/database';
+import { apiHandler } from '@/lib/api/handler';
+import { ApiResponse } from '@/lib/api/response';
 
-export async function GET() {
-  try {
-    const database = await runDatabaseHealthCheck();
+import { prisma } from '@/lib/database';
 
-    return NextResponse.json({
-      success: true,
-      data: database,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown database error';
+export const GET = () =>
+  apiHandler(async () => {
+    const start = performance.now();
 
-    return NextResponse.json(
+    await prisma.$queryRaw`SELECT 1`;
+
+    const duration = Number((performance.now() - start).toFixed(2));
+
+    return new ApiResponse(
       {
-        success: false,
-        error: {
-          code: 'DB_CONNECTION_FAILED',
-          message,
-        },
+        status: 'healthy',
+        database: 'connected',
+        latency: `${duration} ms`,
+        timestamp: new Date().toISOString(),
       },
-      { status: 500 },
+      'Database connection is healthy',
     );
-  }
-}
+  });

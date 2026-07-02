@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
-import QuickAddModal from '@/components/ui/QuickAddModal';
+import QuickAddModal from '../tasks/QuickAddModal';
 
 interface NavItem {
   id: string;

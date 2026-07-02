@@ -253,7 +253,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
               ].map((item) => (
                 <div
                   key={item}
-                  className="rounded-[1.5rem] border px-4 py-4 text-sm backdrop-blur-xl"
+                  className="rounded-3xl border px-4 py-4 text-sm backdrop-blur-xl"
                   style={{
                     borderColor: 'color-mix(in srgb, var(--border) 68%, transparent)',
                     backgroundColor: 'color-mix(in srgb, var(--card-background) 54%, transparent)',
@@ -266,7 +266,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
           </section>
 
           <section
-            className="relative overflow-hidden rounded-[2rem] border p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+            className="relative overflow-hidden rounded-4xl border p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 78%, transparent)',
               backgroundColor: 'color-mix(in srgb, var(--card-background) 74%, transparent)',

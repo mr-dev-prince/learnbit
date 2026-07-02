@@ -1,4 +1,4 @@
-export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'archived';
+export type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'COMPLETED' | 'ARCHIVED';
 
 export interface Task {
   id: string;
@@ -7,7 +7,7 @@ export interface Task {
   description: string | null;
   notes: string | null;
   resourceLinks: string[];
-  scheduledFor: string | null;
+  dueDate: string | null;
   status: TaskStatus;
   createdAt: string;
   updatedAt: string;
@@ -18,6 +18,6 @@ export interface TaskPayload {
   description?: string | null;
   notes?: string | null;
   resourceLinks?: string[];
-  scheduledFor?: string | null;
+  dueDate?: string | null;
   status?: TaskStatus;
 }

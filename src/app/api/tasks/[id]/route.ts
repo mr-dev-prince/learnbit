@@ -1,5 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+
+import { ApiResponse } from '@/lib/api/response';
+import { apiHandler } from '@/lib/api/handler';
+import { NotFoundError } from '@/lib/api/errors';
+
 import { getAuthenticatedUser } from '@/lib/auth';
+
 import { deleteTask, getTaskById, parseTaskPayload, updateTask } from '@/lib/tasks';
 
 interface RouteContext {
@@ -8,151 +14,37 @@ interface RouteContext {
   }>;
 }
 
-const unauthorizedResponse = () =>
-  NextResponse.json(
-    {
-      success: false,
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required',
-      },
-    },
-    { status: 401 },
-  );
-
-export async function GET(_request: NextRequest, context: RouteContext) {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    return unauthorizedResponse();
-  }
-
-  const { id } = await context.params;
-
-  try {
+export const GET = (_request: NextRequest, context: RouteContext) =>
+  apiHandler(async () => {
+    const user = await getAuthenticatedUser();
+    const { id } = await context.params;
     const task = await getTaskById(user.id, id);
-
     if (!task) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'TASK_NOT_FOUND',
-            message: 'Task not found',
-          },
-        },
-        { status: 404 },
-      );
+      throw new NotFoundError('Task not found');
     }
+    return new ApiResponse(task);
+  });
 
-    return NextResponse.json({
-      success: true,
-      data: task,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch task';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'FETCH_TASK_FAILED',
-          message,
-        },
-      },
-      { status: 500 },
-    );
-  }
-}
-
-export async function PUT(request: NextRequest, context: RouteContext) {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    return unauthorizedResponse();
-  }
-
-  const { id } = await context.params;
-
-  try {
+export const PUT = (request: NextRequest, context: RouteContext) =>
+  apiHandler(async () => {
+    const user = await getAuthenticatedUser();
+    const { id } = await context.params;
     const body = await request.json();
     const payload = parseTaskPayload(body);
     const task = await updateTask(user.id, id, payload);
-
     if (!task) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'TASK_NOT_FOUND',
-            message: 'Task not found',
-          },
-        },
-        { status: 404 },
-      );
+      throw new NotFoundError('Task not found');
     }
+    return new ApiResponse(task, 'Task updated successfully');
+  });
 
-    return NextResponse.json({
-      success: true,
-      data: task,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to update task';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'UPDATE_TASK_FAILED',
-          message,
-        },
-      },
-      { status: 400 },
-    );
-  }
-}
-
-export async function DELETE(_request: NextRequest, context: RouteContext) {
-  const user = await getAuthenticatedUser();
-
-  if (!user) {
-    return unauthorizedResponse();
-  }
-
-  const { id } = await context.params;
-
-  try {
+export const DELETE = (_request: NextRequest, context: RouteContext) =>
+  apiHandler(async () => {
+    const user = await getAuthenticatedUser();
+    const { id } = await context.params;
     const deleted = await deleteTask(user.id, id);
-
     if (!deleted) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'TASK_NOT_FOUND',
-            message: 'Task not found',
-          },
-        },
-        { status: 404 },
-      );
+      throw new NotFoundError('Task not found');
     }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Task deleted successfully',
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to delete task';
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'DELETE_TASK_FAILED',
-          message,
-        },
-      },
-      { status: 500 },
-    );
-  }
-}
+    return new ApiResponse(null, 'Task deleted successfully');
+  });

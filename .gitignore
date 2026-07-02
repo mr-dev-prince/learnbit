@@ -42,3 +42,6 @@ next-env.d.ts
 
 oauth-consent-screen.json*.dmg
 oauth-consent-screen.json
+commands.txt
+
+/src/generated/prisma
