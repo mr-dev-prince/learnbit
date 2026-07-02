@@ -1,57 +1,60 @@
 'use client';
 
 import React from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, MoonStar, Search, SunMedium } from 'lucide-react';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 const Header: React.FC = () => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header
-      className="sticky top-0 z-40 border-b backdrop-blur-xl"
-      style={{
-        backgroundColor: 'rgba(10, 10, 10, 0.8)',
-        borderBottomColor: 'var(--primary)',
-      }}
+      className="sticky top-0 z-40 shadow-md bg-(--sidebar-header-background) backdrop-blur-xl"
+      style={{ borderBottomColor: 'var(--border)' }}
     >
-      <div className="flex items-center justify-between px-8 py-4">
-        {/* Left Section - Search */}
+      <div className="flex items-center justify-between gap-4 px-6 py-2 lg:px-8">
         <div className="flex-1 mr-4">
           <div
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/50 border transition-all duration-200 hover:border-primary max-w-md"
-            style={{ borderColor: 'var(--primary)' }}
+            className="flex max-w-md items-center gap-2 rounded-lg border bg-surface/90 px-4 py-2 transition-all duration-200 hover:shadow-sm"
+            style={{ borderColor: 'var(--border)' }}
           >
-            <Search size={18} className="text-slate-400" />
+            <Search size={18} style={{ color: 'var(--foreground)', opacity: 0.55 }} />
             <input
               type="text"
               placeholder="Search..."
-              className="bg-transparent text-white placeholder-slate-400 outline-none flex-1 text-sm"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:opacity-60"
             />
           </div>
         </div>
 
-        {/* Right Section - Notifications & Profile */}
         <div className="flex items-center gap-4">
-          {/* Notifications */}
           <button
-            className="relative p-2 rounded-lg transition-all duration-200 text-slate-300 hover:text-white"
-            style={{
-              backgroundColor: 'transparent',
-              borderColor: 'var(--primary)',
-            }}
+            type="button"
+            onClick={toggleTheme}
+            className="flex items-center gap-2 rounded-lg border p-2 text-sm font-medium transition-colors hover:bg-surface/80"
+            style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <SunMedium size={18} /> : <MoonStar size={18} />}
+          </button>
+
+          <button
+            className="relative rounded-lg border p-2 transition-all duration-200 hover:bg-surface/80"
+            style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
             aria-label="Notifications"
           >
-            <Bell size={20} />
+            <Bell size={18} />
             <span
-              className="absolute top-1 right-1 h-2 w-2 rounded-full"
+              className="absolute top-1 right-1 h-1 w-1 rounded-full"
               style={{ backgroundColor: 'var(--tertiary)' }}
             />
           </button>
 
-          {/* Divider */}
-          <div className="w-px h-6 bg-slate-700" />
+          <div className="h-6 w-px bg-border" />
 
-          {/* User Profile */}
           <button
-            className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:bg-slate-800/50 text-slate-300 hover:text-white"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 hover:bg-surface/80"
+            style={{ color: 'var(--foreground)' }}
             aria-label="User profile"
           >
             <div
