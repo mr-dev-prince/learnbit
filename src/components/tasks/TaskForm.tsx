@@ -86,9 +86,9 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
   }
 
   return (
-    <form id="task-form" onSubmit={handleSubmit} className="space-y-8 px-8 py-8">
+    <form id="task-form" onSubmit={handleSubmit} className="space-y-4 px-4 py-4">
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium">Title</label>
 
@@ -136,7 +136,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
             <label className="mb-2 block text-sm font-medium">Notes</label>
 
             <textarea
-              rows={8}
+              rows={4}
               value={form.notes}
               onChange={(e) => updateField('notes', e.target.value)}
               placeholder="Anything important you want to remember..."
@@ -149,9 +149,9 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div
-            className="rounded-3xl border p-5"
+            className="rounded-3xl border p-4"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
             }}
@@ -189,7 +189,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t pt-6">
+      <div className="flex items-center justify-between border-t border-gray-600 pt-3">
         <div
           className="text-sm"
           style={{
@@ -208,7 +208,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
                 onSuccess();
               }
             }}
-            className="rounded-2xl border px-5 py-3 font-medium transition-all hover:opacity-80"
+            className="rounded-2xl border p-3 font-medium transition-all hover:opacity-80"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
             }}
@@ -219,7 +219,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
           <button
             type="submit"
             disabled={createTask.isPending}
-            className="inline-flex min-w-40 items-center justify-center gap-2 rounded-2xl px-5 py-3 font-semibold transition-all hover:scale-[1.02] disabled:opacity-60"
+            className="inline-flex min-w-40 items-center justify-center gap-2 rounded-2xl p-3 font-semibold transition-all hover:scale-[1.02] disabled:opacity-60"
             style={{
               background: 'var(--primary)',
               color: '#0f172a',

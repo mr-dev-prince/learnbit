@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 
 import { ApiResponse } from '@/lib/api/response';
 import { apiHandler } from '@/lib/api/handler';
-import { UnauthorizedError } from '@/lib/api/errors';
 
 import { getAuthenticatedUser } from '@/lib/auth';
 import { createTask, listTasks, parseTaskPayload } from '@/lib/tasks';

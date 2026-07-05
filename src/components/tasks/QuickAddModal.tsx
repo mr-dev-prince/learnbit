@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Sparkles } from 'lucide-react';
+import { Sparkles, X } from 'lucide-react';
 
 import TaskForm from './TaskForm';
 
@@ -9,77 +9,69 @@ interface QuickAddModalProps {
   onClose: () => void;
 }
 
-export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
-  if (!isOpen) {
-    return null;
-  }
+export default function QuickAddModal({
+  isOpen,
+  onClose,
+}: QuickAddModalProps) {
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6 backdrop-blur-md">
-      <div className="absolute inset-0" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
+      {/* Backdrop */}
+      <button
+        aria-label="Close modal"
+        onClick={onClose}
+        className="absolute inset-0"
+      />
 
-      <div
-        className="relative w-full max-w-5xl overflow-hidden rounded-4xl border"
-        style={{
-          background: 'color-mix(in srgb, var(--card-background) 94%, transparent)',
-          borderColor: 'color-mix(in srgb, var(--border) 75%, transparent)',
-          boxShadow: '0 40px 120px color-mix(in srgb, black 55%, transparent)',
-        }}
-      >
+      {/* Modal */}
+      <div className="relative flex h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
+        {/* Gradient Accent */}
         <div
-          className="absolute inset-x-0 top-0 h-56"
+          className="pointer-events-none absolute inset-x-0 top-0 h-32"
           style={{
             background:
-              'linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, transparent), transparent)',
+              'linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)',
           }}
         />
 
-        <div className="relative border-b px-8 py-7">
+        {/* Header */}
+        <div className="relative flex shrink-0 items-start justify-between border-b border-border bg-surface px-8 py-6">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+              <Sparkles
+                size={13}
+                className="text-primary"
+              />
+              Quick Add
+            </div>
+
+            <h1
+              className="mt-4 text-3xl"
+              style={{ fontFamily: 'var(--font-brand)' }}
+            >
+              Capture a task before you forget it.
+            </h1>
+
+            <p className="mt-2 max-w-xl text-sm text-text-muted">
+              Notes, due dates, resources, revisions and progress—all in one
+              place.
+            </p>
+          </div>
+
           <button
             onClick={onClose}
-            className="absolute right-6 top-6 rounded-xl border p-2 transition-all hover:rotate-90"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--border) 75%, transparent)',
-            }}
+            aria-label="Close"
+            className="rounded-xl border border-border p-2 transition-all duration-200 hover:bg-surface-hover hover:rotate-90"
           >
             <X size={18} />
           </button>
-
-          <div
-            className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold tracking-widest uppercase"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--border) 75%, transparent)',
-            }}
-          >
-            <Sparkles
-              size={14}
-              style={{
-                color: 'var(--primary)',
-              }}
-            />
-            Quick Add
-          </div>
-
-          <h1
-            className="mt-5 text-4xl font-semibold"
-            style={{
-              fontFamily: 'var(--font-brand)',
-            }}
-          >
-            Capture a task before you forget it.
-          </h1>
-
-          <p
-            className="mt-3 max-w-2xl text-sm leading-7"
-            style={{
-              color: 'color-mix(in srgb, var(--foreground) 70%, transparent)',
-            }}
-          >
-            Keep everything in one place—notes, due dates, learning resources and progress.
-          </p>
         </div>
 
-        <TaskForm onSuccess={onClose} />
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-4 py-3">
+          <TaskForm onSuccess={onClose} />
+        </div>
       </div>
     </div>
   );

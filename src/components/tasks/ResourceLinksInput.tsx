@@ -32,7 +32,7 @@ export default function ResourceLinksInput({ value, onChange }: ResourceLinksInp
 
   return (
     <div
-      className="rounded-3xl border p-5"
+      className="rounded-3xl border p-4"
       style={{
         borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
       }}

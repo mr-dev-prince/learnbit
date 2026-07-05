@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { CalendarDays, X } from 'lucide-react';
 
 interface DueDatePickerProps {
@@ -7,28 +8,36 @@ interface DueDatePickerProps {
   onChange: (value: string) => void;
 }
 
+function getCurrentDateTime() {
+  const date = new Date();
+
+  const timezoneOffset = date.getTimezoneOffset() * 60000;
+
+  return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
 export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
+  useEffect(() => {
+    if (!value) {
+      onChange(getCurrentDateTime());
+    }
+  }, []);
+
   function setPreset(days: number) {
     const date = new Date();
 
     date.setDate(date.getDate() + days);
+    date.setHours(18, 0, 0, 0);
 
-    date.setHours(18);
-    date.setMinutes(0);
+    const timezoneOffset = date.getTimezoneOffset() * 60000;
 
-    onChange(date.toISOString().slice(0, 16));
+    onChange(new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16));
   }
 
   return (
     <div>
       <div className="mb-2 flex items-center gap-2">
-        <CalendarDays
-          size={16}
-          style={{
-            color: 'var(--primary)',
-          }}
-        />
-
+        <CalendarDays size={16} className="text-primary" />
         <label className="text-sm font-medium">Due Date</label>
       </div>
 
@@ -37,12 +46,7 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
           type="datetime-local"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-2xl border px-4 py-3 pr-12 outline-none"
-          style={{
-            borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
-
-            background: 'color-mix(in srgb, var(--background) 12%, transparent)',
-          }}
+          className="w-full rounded-2xl border border-border bg-surface px-4 py-3 pr-12 outline-none"
         />
 
         {value && (
@@ -57,46 +61,23 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setPreset(0)}
-          className="rounded-full border px-3 py-1 text-xs transition-all hover:scale-105"
-          style={{
-            borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
-          }}
-        >
-          Today
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setPreset(1)}
-          className="rounded-full border px-3 py-1 text-xs transition-all hover:scale-105"
-          style={{
-            borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
-          }}
-        >
-          Tomorrow
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setPreset(7)}
-          className="rounded-full border px-3 py-1 text-xs transition-all hover:scale-105"
-          style={{
-            borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
-          }}
-        >
-          Next Week
-        </button>
+        {[
+          ['Today', 0],
+          ['Tomorrow', 1],
+          ['Next Week', 7],
+        ].map(([label, days]) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => setPreset(days as number)}
+            className="rounded-full border border-border px-3 py-1 text-xs transition-all hover:scale-105 hover:bg-surface-hover"
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
-      <p
-        className="mt-3 text-xs"
-        style={{
-          color: 'color-mix(in srgb, var(--foreground) 60%, transparent)',
-        }}
-      >
+      <p className="mt-3 text-xs text-text-muted">
         Optional. Leave empty if the task has no deadline.
       </p>
     </div>
