@@ -1,0 +1,36 @@
+model Revision {
+    id          String         @id @default(cuid())
+    taskId      String
+    task        Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+    userId      String
+
+    /// How many times this task has been revised so far (0-indexed)
+    revisionNumber Int         @default(0)
+
+    /// When the revision session is due
+    scheduledAt    DateTime
+
+    /// When the user actually completed this revision (null = still pending)
+    completedAt    DateTime?
+
+    /// Spaced-repetition interval in days applied for this revision step
+    intervalDays   Int         @default(1)
+
+    /// Optional feedback / notes added during the revision session
+    notes          String?
+
+    status         RevisionStatus @default(PENDING)
+
+    createdAt      DateTime    @default(now())
+    updatedAt      DateTime    @updatedAt
+
+    @@index([taskId])
+    @@index([userId, scheduledAt])
+    @@index([userId, status])
+}
+
+enum RevisionStatus {
+    PENDING
+    COMPLETED
+    SKIPPED
+}

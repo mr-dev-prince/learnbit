@@ -28,7 +28,7 @@ export default function LogoutButton({ className = '', compact = false }: Logout
       aria-label="Log out"
     >
       <LogOut size={18} />
-      {!compact && <span>Log out</span>}
+      {!compact && <span className="font-semibold">Log out</span>}
     </button>
   );
 }

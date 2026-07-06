@@ -9,17 +9,19 @@ import {
   ExternalLink,
   Pencil,
   RotateCcw,
+  Trash2,
   X,
   Sparkles,
 } from 'lucide-react';
 import type { Task } from '@/types/Task';
+import { useDeleteTask } from '@/hooks/useTasks';
 
 interface TaskViewModalProps {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
   onEdit: (task: Task) => void;
-  onDelete: (task: Task) => void;
+  onDelete?: (task: Task) => void;
   onMarkRevision?: (task: Task) => void;
 }
 
@@ -91,6 +93,9 @@ export default function TaskViewModal({
   const [editNotes, setEditNotes] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [isHoveringClose, setIsHoveringClose] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
 
   if (!isOpen || !task) return null;
 
@@ -110,6 +115,15 @@ export default function TaskViewModal({
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    deleteTask(task.id, {
+      onSuccess: () => {
+        onDelete?.(task);
+        onClose();
+      },
+    });
   };
 
   return (
@@ -137,7 +151,7 @@ export default function TaskViewModal({
         "
       >
         <div className="relative px-6 pt-6 pb-5 sm:px-8 sm:pt-7 sm:pb-6">
-          <div className="flex w-full justify-between p-3 items-center gap-3">
+          <div className="flex w-full justify-between py-3 items-center gap-3">
             <h1
               className="
               text-[22px]
@@ -147,7 +161,6 @@ export default function TaskViewModal({
               text-foreground
               sm:text-2xl
             "
-              style={{ fontFamily: 'var(--font-brand)' }}
             >
               {task.title}
             </h1>
@@ -560,6 +573,82 @@ export default function TaskViewModal({
                 </button>
               )}
 
+              {showDeleteConfirm ? (
+                <>
+                  <span className="text-sm text-text-muted mr-1">Sure?</span>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="
+                      rounded-lg
+                      border
+                      border-border
+                      bg-transparent
+                      px-3
+                      py-2
+                      text-sm
+                      font-medium
+                      text-text-muted
+                      transition-all
+                      duration-200
+                      hover:bg-surface-hover
+                    "
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="
+                      flex
+                      items-center
+                      gap-1.5
+                      rounded-lg
+                      bg-red-500
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      text-white
+                      transition-all
+                      duration-200
+                      hover:bg-red-600
+                      active:scale-[0.98]
+                      disabled:pointer-events-none
+                      disabled:opacity-50
+                    "
+                  >
+                    <Trash2 size={14} />
+                    {isDeleting ? 'Deleting…' : 'Delete'}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="
+                    flex
+                    items-center
+                    gap-1.5
+                    rounded-lg
+                    border
+                    border-border
+                    bg-transparent
+                    px-4
+                    py-2
+                    text-sm
+                    font-medium
+                    text-text-muted
+                    transition-all
+                    duration-200
+                    hover:border-red-500/30
+                    hover:bg-red-500/5
+                    hover:text-red-500
+                  "
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              )}
+
               <button
                 onClick={handleStartEdit}
                 className="
@@ -581,7 +670,7 @@ export default function TaskViewModal({
                 "
               >
                 <Pencil size={14} />
-                Save Changes
+                Edit
               </button>
             </>
           )}

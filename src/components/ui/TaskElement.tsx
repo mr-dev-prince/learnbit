@@ -1,28 +1,146 @@
 'use client';
 
-import type { Task } from '@/types/Task';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, Trash2 } from 'lucide-react';
+import {
+  useDeleteTask,
+  useMarkRevision,
+  useTaskRevisions,
+  useUnmarkRevision,
+  useUpdateTask,
+} from '@/hooks/useTasks';
+import type { Task, TaskStatus } from '@/types/Task';
 import Switch from './Switch';
 
 interface TaskElementProps {
   task: Task;
   onClick?: () => void;
+  onDeleted?: () => void;
 }
 
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<TaskStatus, string> = {
   TODO: 'bg-[var(--todo-bg)] text-[var(--todo-text)]',
   IN_PROGRESS: 'bg-[var(--progress-bg)] text-[var(--progress-text)]',
   COMPLETED: 'bg-[var(--completed-bg)] text-[var(--completed-text)]',
   ARCHIVED: 'bg-[var(--archived-bg)] text-[var(--archived-text)]',
-} as const;
+};
 
-const STATUS_LABELS = {
+const STATUS_LABELS: Record<TaskStatus, string> = {
   TODO: 'To Do',
   IN_PROGRESS: 'In Progress',
   COMPLETED: 'Completed',
   ARCHIVED: 'Archived',
-} as const;
+};
 
-export default function TaskElement({ task, onClick }: TaskElementProps) {
+const ALL_STATUSES: TaskStatus[] = ['TODO', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED'];
+
+function StatusChip({ task }: { task: Task }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { mutate: updateTask, isPending } = useUpdateTask();
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const handleSelect = (status: TaskStatus) => {
+    if (status === task.status) { setOpen(false); return; }
+    updateTask({
+      id: task.id,
+      payload: {
+        title: task.title,
+        description: task.description,
+        notes: task.notes,
+        resourceLinks: task.resourceLinks,
+        dueDate: task.dueDate,
+        status,
+      },
+    });
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        disabled={isPending}
+        className={`
+          ${STATUS_COLORS[task.status]}
+          inline-flex items-center gap-1.5
+          rounded-full px-3 py-0.5
+          text-xs font-semibold
+          transition-opacity duration-150
+          hover:opacity-80
+          disabled:pointer-events-none disabled:opacity-50
+        `}
+      >
+        {STATUS_LABELS[task.status]}
+        <ChevronDown
+          size={11}
+          className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="
+            absolute right-0 top-full z-50 mt-1.5
+            min-w-[148px] overflow-hidden
+            rounded-xl border border-border
+            bg-surface shadow-lg
+          "
+          onClick={(e) => e.stopPropagation()}
+        >
+          {ALL_STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => handleSelect(s)}
+              className={`
+                flex w-full items-center gap-2.5 px-3 py-2
+                text-left text-xs font-semibold
+                transition-colors duration-150
+                hover:bg-surface-hover
+                ${s === task.status ? 'opacity-50 pointer-events-none' : ''}
+              `}
+            >
+              <span className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[s].split(' ')[1].replace('text-', 'bg-')}`} />
+              <span className={STATUS_COLORS[s].split(' ')[1]}>
+                {STATUS_LABELS[s]}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function TaskElement({ task, onClick, onDeleted }: TaskElementProps) {
+  const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
+
+  const { data: revisions = [] } = useTaskRevisions(task.id);
+  const isMarkedForRevision = revisions.some((r) => r.status === 'PENDING');
+
+  const { mutate: markRevision, isPending: isMarking } = useMarkRevision();
+  const { mutate: unmarkRevision, isPending: isUnmarking } = useUnmarkRevision();
+  const isRevisionPending = isMarking || isUnmarking;
+
+  const handleRevisionToggle = (checked: boolean) => {
+    if (checked) {
+      markRevision({ taskId: task.id });
+    } else {
+      unmarkRevision(task.id);
+    }
+  };
+
   return (
     <div
       role="button"
@@ -41,19 +159,15 @@ export default function TaskElement({ task, onClick }: TaskElementProps) {
         p-4
         transition-all duration-200
         hover:border-border-strong
-        hover:bg-surface-hover
-        hover:shadow-md
+        hover:shadow-sm
         cursor-pointer
       "
     >
-      {/* Left */}
       <div className="flex min-w-0 flex-1 items-center gap-4">
         <div className="h-6 w-6 shrink-0 rounded-full border-2 border-border" />
 
         <div className="min-w-0">
-          <h3 className="truncate text-lg font-semibold text-foreground">
-            {task.title}
-          </h3>
+          <h3 className="truncate text-lg font-semibold text-foreground">{task.title}</h3>
 
           {task.description && (
             <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-muted">
@@ -63,33 +177,52 @@ export default function TaskElement({ task, onClick }: TaskElementProps) {
         </div>
       </div>
 
-      {/* Right */}
       <div className="ml-6 flex shrink-0 items-center gap-5">
-        <span
-          className={`
-            ${STATUS_COLORS[task.status]}
-            inline-flex
-            min-w-[110px]
-            items-center
-            justify-center
-            rounded-full
-            px-3
-            py-1
-            text-xs
-            font-semibold
-          `}
-        >
-          {STATUS_LABELS[task.status]}
-        </span>
+        <StatusChip task={task} />
 
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground">
+          <span
+            className={`text-sm font-medium transition-colors duration-200 ${
+              isMarkedForRevision ? 'text-blue-500' : 'text-text-muted'
+            }`}
+          >
             Revision
           </span>
 
-          <Switch />
+          <Switch
+            checked={isMarkedForRevision}
+            onChange={handleRevisionToggle}
+            disabled={isRevisionPending}
+          />
         </div>
+
+        <button
+          aria-label="Delete task"
+          disabled={isDeleting}
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteTask(task.id, { onSuccess: () => onDeleted?.() });
+          }}
+          className="
+            flex
+            h-8
+            w-8
+            items-center
+            justify-center
+            rounded-lg
+            text-text-muted
+            transition-all
+            duration-200
+            hover:bg-red-500/10
+            hover:text-red-500
+            disabled:pointer-events-none
+            disabled:opacity-40
+          "
+        >
+          <Trash2 size={15} />
+        </button>
       </div>
     </div>
   );
 }
+

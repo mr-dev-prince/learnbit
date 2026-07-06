@@ -137,7 +137,7 @@ const Sidebar: React.FC = () => {
           </button>
           <LogoutButton
             compact={isCollapsed}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-colors hover:bg-surface/70"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border p-3 text-sm font-medium transition-colors hover:bg-surface/70"
           />
         </div>
       </aside>
