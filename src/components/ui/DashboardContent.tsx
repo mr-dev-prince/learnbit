@@ -5,6 +5,7 @@ import { BookOpen, CheckCircle2, Flame, TrendingUp } from 'lucide-react';
 import TaskBox from './TaskBox';
 import { useTasks } from '@/hooks/useTasks';
 import { useRevisionQueue } from '@/hooks/useRevisions';
+import type { TaskFilterPeriod } from '@/lib/filterTasks';
 
 function weeklyActivityFromTasks(tasks: { createdAt: string; status: string }[]) {
   const days = Array(7).fill(0) as number[];
@@ -148,11 +149,11 @@ function RevisionStreakCard() {
   );
 }
 
-const DashboardContent = () => {
+const DashboardContent = ({ filter }: { filter: TaskFilterPeriod }) => {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
       <div>
-        <TaskBox />
+        <TaskBox filter={filter} />
       </div>
       <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
         <ProgressOverviewCard />

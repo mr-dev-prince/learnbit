@@ -12,9 +12,11 @@ import {
   Trash2,
   X,
   Sparkles,
+  Calendar,
 } from 'lucide-react';
 import type { Task } from '@/types/Task';
 import { useDeleteTask } from '@/hooks/useTasks';
+import { formatDateTime } from '@/utils/common/dateUtils';
 
 interface TaskViewModalProps {
   task: Task | null;
@@ -190,9 +192,10 @@ export default function TaskViewModal({
               </button>
             </div>
           </div>
-          <div className="flex w-fit justify-center items-center gap-3">
-            <div
-              className={`
+          <div className="flex w-full justify-between items-center">
+            <div className="flex w-fit justify-center items-center gap-3">
+              <div
+                className={`
                 inline-flex
                 items-center
                 gap-1.5
@@ -206,17 +209,22 @@ export default function TaskViewModal({
                 ${status.bg}
                 ${status.text}
               `}
-            >
-              {StatusIcon ? (
-                <StatusIcon size={13} strokeWidth={2.5} />
-              ) : (
-                <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-              )}
-              {status.label}
+              >
+                {StatusIcon ? (
+                  <StatusIcon size={13} strokeWidth={2.5} />
+                ) : (
+                  <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
+                )}
+                {status.label}
+              </div>
+              <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
+                <Clock size={13} strokeWidth={2} className="opacity-50" />
+                <span>Last updated {timeAgo}</span>
+              </div>
             </div>
             <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
-              <Clock size={13} strokeWidth={2} className="opacity-50" />
-              <span>Last updated {timeAgo}</span>
+              <Calendar size={13} strokeWidth={2} className="opacity-50" />
+              <p>{formatDateTime(task.dueDate || '')}</p>
             </div>
           </div>
         </div>

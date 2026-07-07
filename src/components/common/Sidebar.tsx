@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
 import QuickAddModal from '../tasks/QuickAddModal';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { openQuickAdd, closeQuickAdd } from '@/store/slices/modalSlice';
 
 interface NavItem {
   id: string;
@@ -17,8 +19,9 @@ interface NavItem {
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const dispatch = useAppDispatch();
+  const isQuickAddOpen = useAppSelector((state) => state.modal.quickAddOpen);
 
   const navItems: NavItem[] = [
     {
@@ -125,7 +128,7 @@ const Sidebar: React.FC = () => {
             />
           </div>
           <button
-            onClick={() => setIsQuickAddOpen(true)}
+            onClick={() => dispatch(openQuickAdd())}
             className={`flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-semibold text-white transition-all duration-200 active:scale-95 hover:opacity-90 ${
               isCollapsed ? 'px-3 py-3' : ''
             }`}
@@ -144,7 +147,7 @@ const Sidebar: React.FC = () => {
 
       <div className="fixed inset-0 pointer-events-none md:hidden" />
 
-      <QuickAddModal isOpen={isQuickAddOpen} onClose={() => setIsQuickAddOpen(false)} />
+      <QuickAddModal isOpen={isQuickAddOpen} onClose={() => dispatch(closeQuickAdd())} />
     </>
   );
 };

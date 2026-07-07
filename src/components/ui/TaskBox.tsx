@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { ClipboardList, Plus } from 'lucide-react';
+import { CalendarOff, ClipboardList, Plus } from 'lucide-react';
 
 import type { Task } from '@/types/Task';
 import { useTasks } from '@/hooks/useTasks';
+import { filterTasksByPeriod, type TaskFilterPeriod } from '@/lib/filterTasks';
+import { useAppDispatch } from '@/hooks/useRedux';
+import { openQuickAdd } from '@/store/slices/modalSlice';
 import TaskElement from './TaskElement';
 import TaskViewModal from './TaskViewModal';
 
@@ -58,9 +61,32 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
   );
 }
 
-export default function TaskBox() {
+function NoMatchState({ period }: { period: TaskFilterPeriod }) {
+  const label: Record<TaskFilterPeriod, string> = {
+    Daily: 'today',
+    Weekly: 'this week',
+    Monthly: 'this month',
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-surface/50 px-6 py-14 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/8 text-primary/40">
+        <CalendarOff size={26} strokeWidth={1.5} />
+      </div>
+      <div className="space-y-1">
+        <h3 className="text-base font-semibold text-foreground">No tasks {label[period]}</h3>
+        <p className="max-w-xs text-sm text-text-muted">
+          Tasks created {label[period]} will appear here.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function TaskBox({ filter }: { filter: TaskFilterPeriod }) {
   const { data: tasks, isPending } = useTasks();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const dispatch = useAppDispatch();
 
   if (isPending) {
     return (
@@ -72,23 +98,24 @@ export default function TaskBox() {
     );
   }
 
-  if (!tasks || tasks.length === 0) {
+  if (!tasks || 0 === tasks.length) {
     return (
       <div>
-        <EmptyState
-          onAdd={() => {
-            // TODO: open create-task modal when implemented
-            console.log('Add task clicked');
-          }}
-        />
+        <EmptyState onAdd={() => dispatch(openQuickAdd())} />
       </div>
     );
+  }
+
+  const filteredTasks = filterTasksByPeriod(tasks, filter);
+
+  if (filteredTasks.length === 0) {
+    return <NoMatchState period={filter} />;
   }
 
   return (
     <>
       <div className="flex flex-col h-fit rounded-2xl border border-border gap-3 bg-surface p-4">
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <TaskElement key={task.id} task={task} onClick={() => setSelectedTask(task)} />
         ))}
       </div>

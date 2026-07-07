@@ -1,11 +1,13 @@
 'use client';
 
+import type { TaskFilterPeriod } from '@/lib/filterTasks';
+
 interface TaskFilterProps {
-  selected: string;
-  setSelected: (value: string) => void;
+  selected: TaskFilterPeriod;
+  setSelected: (value: TaskFilterPeriod) => void;
 }
 
-const FILTERS = ['Daily', 'Weekly', 'Monthly'] as const;
+const FILTERS: TaskFilterPeriod[] = ['Daily', 'Weekly', 'Monthly'];
 
 export default function TaskFilter({ selected, setSelected }: TaskFilterProps) {
   return (
