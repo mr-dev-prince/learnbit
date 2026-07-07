@@ -6,7 +6,7 @@ import Hero from '@/components/common/Hero';
 import SplashScreen from '@/components/ui/SplashScreen';
 import { createClient } from '@/utils/supabase/client';
 
-const SPLASH_DURATION = 3000;
+const SPLASH_DURATION = 2000;
 const FADE_DURATION_MS = 700;
 
 export default function Home() {

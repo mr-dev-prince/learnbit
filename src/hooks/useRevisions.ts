@@ -20,6 +20,8 @@ export function useRevisionQueue() {
   return useQuery({
     queryKey: revisionQueueKey,
     queryFn: listPendingRevisions,
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 

@@ -1,5 +1,7 @@
 'use client';
 
+import toast from 'react-hot-toast';
+
 import { useState } from 'react';
 import {
   CheckCircle2,
@@ -15,14 +17,14 @@ import {
   Calendar,
 } from 'lucide-react';
 import type { Task } from '@/types/Task';
-import { useDeleteTask } from '@/hooks/useTasks';
+import { useDeleteTask, useUpdateTask } from '@/hooks/useTasks';
 import { formatDateTime } from '@/utils/common/dateUtils';
 
 interface TaskViewModalProps {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
-  onEdit: (task: Task) => void;
+  onEdit?: (task: Task) => void;
   onDelete?: (task: Task) => void;
   onMarkRevision?: (task: Task) => void;
 }
@@ -98,6 +100,7 @@ export default function TaskViewModal({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
+  const { mutate: updateTask, isPending: isUpdating } = useUpdateTask();
 
   if (!isOpen || !task) return null;
 
@@ -106,13 +109,32 @@ export default function TaskViewModal({
   const timeAgo = getTimeAgo(task.updatedAt);
 
   const handleStartEdit = () => {
+    setEditDescription(task.description || '');
     setEditNotes(task.notes || '');
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    onEdit({ ...task, notes: editNotes });
-    setIsEditing(false);
+    updateTask(
+      {
+        id: task.id,
+        payload: {
+          title: task.title,
+          description: editDescription.trim() || null,
+          notes: editNotes.trim() || null,
+          resourceLinks: task.resourceLinks,
+          dueDate: task.dueDate,
+          status: task.status,
+        },
+      },
+      {
+        onSuccess: () => {
+          toast.success('Task updated');
+          setIsEditing(false);
+        },
+        onError: () => toast.error('Failed to update task'),
+      },
+    );
   };
 
   const handleCancelEdit = () => {
@@ -122,9 +144,11 @@ export default function TaskViewModal({
   const handleDelete = () => {
     deleteTask(task.id, {
       onSuccess: () => {
+        toast.success('Task deleted');
         onDelete?.(task);
         onClose();
       },
+      onError: () => toast.error('Failed to delete task'),
     });
   };
 
@@ -287,7 +311,7 @@ export default function TaskViewModal({
                   "
                   onClick={handleStartEdit}
                 >
-                  {task.notes ? (
+                  {task.description ? (
                     <p className="whitespace-pre-wrap">{task.description}</p>
                   ) : (
                     <p className="italic text-text-muted/40">No description yet. Click to add...</p>
@@ -512,6 +536,7 @@ export default function TaskViewModal({
 
               <button
                 onClick={handleSave}
+                disabled={isUpdating}
                 className="
                   rounded-lg
                   bg-primary
@@ -525,9 +550,11 @@ export default function TaskViewModal({
                   hover:opacity-90
                   hover:shadow-[0_4px_16px_-4px_rgba(var(--primary-rgb),0.4)]
                   active:scale-[0.98]
+                  disabled:pointer-events-none
+                  disabled:opacity-50
                 "
               >
-                Save Changes
+                {isUpdating ? 'Saving…' : 'Save Changes'}
               </button>
             </>
           ) : (

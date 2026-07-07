@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { BookOpen, CheckCircle2, Flame, TrendingUp } from 'lucide-react';
+import { Flame, TrendingUp } from 'lucide-react';
 import TaskBox from './TaskBox';
 import { useTasks } from '@/hooks/useTasks';
 import { useRevisionQueue } from '@/hooks/useRevisions';
 import type { TaskFilterPeriod } from '@/lib/filterTasks';
 
-function weeklyActivityFromTasks(tasks: { createdAt: string; status: string }[]) {
+function weeklyCompletionsFromTasks(tasks: { updatedAt: string; status: string }[]) {
   const days = Array(7).fill(0) as number[];
   const now = new Date();
   const startOfWeek = new Date(now);
@@ -15,9 +15,11 @@ function weeklyActivityFromTasks(tasks: { createdAt: string; status: string }[])
   startOfWeek.setHours(0, 0, 0, 0);
 
   for (const task of tasks) {
-    const d = new Date(task.createdAt);
-    if (d >= startOfWeek) {
-      days[d.getDay()] += 1;
+    if (task.status === 'COMPLETED') {
+      const d = new Date(task.updatedAt);
+      if (d >= startOfWeek) {
+        days[d.getDay()] += 1;
+      }
     }
   }
   return days;
@@ -28,24 +30,41 @@ const DAY_LABELS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 function MiniBarChart({ values }: { values: number[] }) {
   const max = Math.max(...values, 1);
   const todayIdx = new Date().getDay();
+  const total = values.reduce((a, b) => a + b, 0);
 
   return (
     <div className="mt-5">
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted/60">This week</p>
+        <p className="text-[10px] font-bold text-primary">
+          {total} task{total !== 1 ? 's' : ''} completed
+        </p>
+      </div>
       <div className="flex items-end gap-1.5 h-20">
         {values.map((v, i) => {
           const heightPct = (v / max) * 100;
           const isToday = i === todayIdx;
+          const hasData = v > 0;
           return (
-            <div key={i} className="flex flex-1 flex-col items-center gap-1">
+            <div key={i} className="group relative flex flex-1 flex-col items-center">
+              {hasData && (
+                <div className="pointer-events-none absolute -top-6 left-1/2 z-10 -translate-x-1/2 rounded px-1.5 py-0.5 text-[9px] font-bold whitespace-nowrap bg-foreground text-background opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                  {v}
+                </div>
+              )}
               <div
-                className="w-full rounded-t-md"
-                style={{ height: '100%', display: 'flex', alignItems: 'flex-end' }}
+                className="w-full"
+                style={{ height: '80px', display: 'flex', alignItems: 'flex-end' }}
               >
                 <div
                   className={`w-full rounded-t-md transition-all duration-500 ${
-                    isToday ? 'bg-primary' : 'bg-primary/20'
+                    isToday
+                      ? 'bg-primary shadow-[0_0_8px_0px_rgba(var(--primary-rgb),0.4)]'
+                      : hasData
+                        ? 'bg-primary/40'
+                        : 'bg-primary/10'
                   }`}
-                  style={{ height: `${Math.max(heightPct, 8)}%` }}
+                  style={{ height: `${Math.max(heightPct, 6)}%` }}
                 />
               </div>
             </div>
@@ -75,7 +94,7 @@ function ProgressOverviewCard() {
   const completed = tasks.filter((t) => t.status === 'COMPLETED').length;
   const inProgress = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
   const goalPct = total > 0 ? Math.round((completed / total) * 100) : 0;
-  const activity = weeklyActivityFromTasks(tasks);
+  const activity = weeklyCompletionsFromTasks(tasks);
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">

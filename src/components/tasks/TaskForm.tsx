@@ -1,6 +1,7 @@
 'use client';
 
 import { SubmitEvent, useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 
 import type { TaskStatus } from '@/types/Task';
@@ -78,10 +79,12 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
       });
 
       setForm(INITIAL_STATE);
-
+      toast.success('Task created successfully');
       onSuccess();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.');
+      const message = err instanceof Error ? err.message : 'Something went wrong.';
+      setError(message);
+      toast.error(message);
     }
   }
 

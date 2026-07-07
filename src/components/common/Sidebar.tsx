@@ -64,22 +64,23 @@ const Sidebar: React.FC = () => {
           style={{ borderBottomColor: 'var(--border)' }}
         >
           {!isCollapsed && (
-            <div className="flex items-center gap-3 justify-start">
+            <Link href={'/'} className="flex items-center gap-3 justify-start ">
               <p
-                className="text-5xl leading-none font-black"
+                className="text-5xl leading-none font-black select-none"
                 style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
               >
                 learn<span className="text-orange-600 text-5xl leading-none font-black">bit.</span>
               </p>
-            </div>
+            </Link>
           )}
           {isCollapsed && (
-            <span
-              className="mx-auto text-5xl font-black leading-none"
+            <Link
+              href={'/'}
+              className="mx-auto text-5xl font-black leading-none select-none"
               style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
             >
               l<span className="text-orange-600 text-5xl font-black leading-none">b.</span>
-            </span>
+            </Link> 
           )}
         </div>
 

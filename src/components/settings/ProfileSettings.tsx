@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { LockKeyhole, Save, UserRound } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import { createClient } from '@/utils/supabase/client';
@@ -13,16 +14,12 @@ interface ProfileSettingsProps {
 export default function ProfileSettings({ email, fullName }: ProfileSettingsProps) {
   const [name, setName] = useState(fullName);
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isSavingPassword, setIsSavingPassword] = useState(false);
 
   const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSavingProfile(true);
-    setMessage(null);
-    setError(null);
 
     try {
       const supabase = createClient();
@@ -33,13 +30,13 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
       });
 
       if (updateError) {
-        setError(updateError.message);
+        toast.error(updateError.message);
         return;
       }
 
-      setMessage('Profile updated successfully.');
+      toast.success('Profile updated successfully');
     } catch {
-      setError('Unable to update your profile right now.');
+      toast.error('Unable to update your profile right now.');
     } finally {
       setIsSavingProfile(false);
     }
@@ -48,8 +45,6 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
   const handlePasswordSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSavingPassword(true);
-    setMessage(null);
-    setError(null);
 
     try {
       const supabase = createClient();
@@ -58,14 +53,14 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
       });
 
       if (updateError) {
-        setError(updateError.message);
+        toast.error(updateError.message);
         return;
       }
 
-      setMessage('Password updated successfully.');
+      toast.success('Password updated successfully');
       setPassword('');
     } catch {
-      setError('Unable to update your password right now.');
+      toast.error('Unable to update your password right now.');
     } finally {
       setIsSavingPassword(false);
     }
@@ -186,30 +181,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
           </div>
         </form>
 
-        {error && (
-          <div
-            className="mt-4 rounded-2xl border px-4 py-3 text-sm"
-            style={{
-              borderColor: 'rgba(239, 68, 68, 0.35)',
-              backgroundColor: 'rgba(239, 68, 68, 0.08)',
-              color: '#b91c1c',
-            }}
-          >
-            {error}
-          </div>
-        )}
 
-        {message && (
-          <div
-            className="mt-4 rounded-2xl border px-4 py-3 text-sm"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--secondary) 42%, transparent)',
-              backgroundColor: 'color-mix(in srgb, var(--secondary) 14%, transparent)',
-            }}
-          >
-            {message}
-          </div>
-        )}
       </div>
     </div>
   );

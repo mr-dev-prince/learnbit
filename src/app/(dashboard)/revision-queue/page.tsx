@@ -1,5 +1,7 @@
 'use client';
 
+import toast from 'react-hot-toast';
+
 import { useState } from 'react';
 import {
   BookOpen,
@@ -53,33 +55,51 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
   const due = formatScheduledAt(revision.scheduledAt);
 
   const handleComplete = () => {
-    updateRevision({
-      id: revision.id,
-      payload: {
-        status: 'COMPLETED',
-        notes: notes.trim() || null,
-        intervalDays,
-        scheduledAt: scheduledAt || null,
+    updateRevision(
+      {
+        id: revision.id,
+        payload: {
+          status: 'COMPLETED',
+          notes: notes.trim() || null,
+          intervalDays,
+          scheduledAt: scheduledAt || null,
+        },
       },
-    });
+      {
+        onSuccess: () => toast.success('Revision completed'),
+        onError: () => toast.error('Failed to complete revision'),
+      },
+    );
   };
 
   const handleSkip = () => {
-    updateRevision({
-      id: revision.id,
-      payload: { status: 'SKIPPED', notes: notes.trim() || null },
-    });
+    updateRevision(
+      {
+        id: revision.id,
+        payload: { status: 'SKIPPED', notes: notes.trim() || null },
+      },
+      {
+        onSuccess: () => toast('Revision skipped', { icon: '⏭️' }),
+        onError: () => toast.error('Failed to skip revision'),
+      },
+    );
   };
 
   const handleSaveNotes = () => {
-    updateRevision({
-      id: revision.id,
-      payload: {
-        notes: notes.trim() || null,
-        intervalDays,
-        scheduledAt: scheduledAt || null,
+    updateRevision(
+      {
+        id: revision.id,
+        payload: {
+          notes: notes.trim() || null,
+          intervalDays,
+          scheduledAt: scheduledAt || null,
+        },
       },
-    });
+      {
+        onSuccess: () => toast.success('Notes saved'),
+        onError: () => toast.error('Failed to save notes'),
+      },
+    );
   };
 
   return (

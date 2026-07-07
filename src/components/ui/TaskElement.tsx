@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { ChevronDown, Trash2 } from 'lucide-react';
 import {
   useDeleteTask,
@@ -53,17 +54,23 @@ function StatusChip({ task }: { task: Task }) {
 
   const handleSelect = (status: TaskStatus) => {
     if (status === task.status) { setOpen(false); return; }
-    updateTask({
-      id: task.id,
-      payload: {
-        title: task.title,
-        description: task.description,
-        notes: task.notes,
-        resourceLinks: task.resourceLinks,
-        dueDate: task.dueDate,
-        status,
+    updateTask(
+      {
+        id: task.id,
+        payload: {
+          title: task.title,
+          description: task.description,
+          notes: task.notes,
+          resourceLinks: task.resourceLinks,
+          dueDate: task.dueDate,
+          status,
+        },
       },
-    });
+      {
+        onSuccess: () => toast.success(`Status updated to ${STATUS_LABELS[status]}`),
+        onError: () => toast.error('Failed to update status'),
+      },
+    );
     setOpen(false);
   };
 
@@ -135,9 +142,18 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
 
   const handleRevisionToggle = (checked: boolean) => {
     if (checked) {
-      markRevision({ taskId: task.id });
+      markRevision(
+        { taskId: task.id },
+        {
+          onSuccess: () => toast.success('Added to revision queue'),
+          onError: () => toast.error('Failed to add to revision queue'),
+        },
+      );
     } else {
-      unmarkRevision(task.id);
+      unmarkRevision(task.id, {
+        onSuccess: () => toast.success('Removed from revision queue'),
+        onError: () => toast.error('Failed to remove from revision queue'),
+      });
     }
   };
 
@@ -201,7 +217,13 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
           disabled={isDeleting}
           onClick={(e) => {
             e.stopPropagation();
-            deleteTask(task.id, { onSuccess: () => onDeleted?.() });
+            deleteTask(task.id, {
+              onSuccess: () => {
+                toast.success('Task deleted');
+                onDeleted?.();
+              },
+              onError: () => toast.error('Failed to delete task'),
+            });
           }}
           className="
             flex
