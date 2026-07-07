@@ -52,7 +52,7 @@ export default function ResourceLinksInput({ value, onChange }: ResourceLinksInp
         <button
           type="button"
           onClick={add}
-          className="inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-all hover:scale-[1.03]"
+          className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-all hover:scale-[1.03]"
           style={{
             borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
           }}
@@ -70,7 +70,7 @@ export default function ResourceLinksInput({ value, onChange }: ResourceLinksInp
               value={link}
               onChange={(e) => update(index, e.target.value)}
               placeholder="https://..."
-              className="flex-1 rounded-2xl border px-4 py-3 outline-none"
+              className="flex-1 rounded-lg border px-4 py-3 outline-none"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
                 background: 'color-mix(in srgb, var(--background) 15%, transparent)',
@@ -80,7 +80,7 @@ export default function ResourceLinksInput({ value, onChange }: ResourceLinksInp
             <button
               type="button"
               onClick={() => remove(index)}
-              className="rounded-xl border p-3 transition-colors hover:bg-red-500/10"
+              className="rounded-lg border p-3 transition-colors hover:bg-red-500/10"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
               }}
@@ -92,7 +92,7 @@ export default function ResourceLinksInput({ value, onChange }: ResourceLinksInp
       </div>
 
       <div
-        className="mt-5 rounded-2xl border px-4 py-3 text-sm"
+        className="mt-5 rounded-lg border px-4 py-3 text-sm"
         style={{
           borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
           background: 'color-mix(in srgb, var(--background) 12%, transparent)',

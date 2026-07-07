@@ -310,7 +310,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                 type="button"
                 onClick={handleGoogleAuth}
                 disabled={isSubmitting}
-                className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border px-4 py-3.5 text-sm font-semibold transition-opacity disabled:opacity-60"
+                className="mt-8 flex w-full items-center justify-center gap-3 rounded-lg border px-4 py-3.5 text-sm font-semibold transition-opacity disabled:opacity-60"
                 style={{
                   borderColor: 'color-mix(in srgb, var(--border) 72%, transparent)',
                   backgroundColor: 'color-mix(in srgb, var(--background) 16%, transparent)',
@@ -352,7 +352,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                     required
                     autoComplete="email"
                     placeholder="you@example.com"
-                    className="w-full rounded-2xl border px-4 py-3.5 text-sm outline-none transition"
+                    className="w-full rounded-lg border px-4 py-3.5 text-sm outline-none transition"
                     style={{
                       borderColor: 'color-mix(in srgb, var(--border) 74%, transparent)',
                       backgroundColor: 'color-mix(in srgb, var(--background) 18%, transparent)',
@@ -375,7 +375,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                     minLength={6}
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     placeholder={mode === 'login' ? 'Enter your password' : 'Create a password'}
-                    className="w-full rounded-2xl border px-4 py-3.5 text-sm outline-none transition"
+                    className="w-full rounded-lg border px-4 py-3.5 text-sm outline-none transition"
                     style={{
                       borderColor: 'color-mix(in srgb, var(--border) 74%, transparent)',
                       backgroundColor: 'color-mix(in srgb, var(--background) 18%, transparent)',
@@ -385,7 +385,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
 
                 {error && (
                   <div
-                    className="rounded-2xl border px-4 py-3 text-sm"
+                    className="rounded-lg border px-4 py-3 text-sm"
                     style={{
                       borderColor: 'rgba(239, 68, 68, 0.35)',
                       backgroundColor: 'rgba(239, 68, 68, 0.08)',
@@ -398,7 +398,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
 
                 {message && (
                   <div
-                    className="rounded-2xl border px-4 py-3 text-sm"
+                    className="rounded-lg border px-4 py-3 text-sm"
                     style={{
                       borderColor: 'color-mix(in srgb, var(--secondary) 42%, transparent)',
                       backgroundColor: 'color-mix(in srgb, var(--secondary) 14%, transparent)',
@@ -411,7 +411,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-2xl px-4 py-3.5 text-sm font-semibold transition-transform duration-200 disabled:opacity-60"
+                  className="w-full rounded-lg px-4 py-3.5 text-sm font-semibold transition-transform duration-200 disabled:opacity-60"
                   style={{
                     backgroundColor: 'var(--primary)',
                     color: '#0f172a',

@@ -53,7 +53,10 @@ function StatusChip({ task }: { task: Task }) {
   }, [open]);
 
   const handleSelect = (status: TaskStatus) => {
-    if (status === task.status) { setOpen(false); return; }
+    if (status === task.status) {
+      setOpen(false);
+      return;
+    }
     updateTask(
       {
         id: task.id,
@@ -77,7 +80,10 @@ function StatusChip({ task }: { task: Task }) {
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
         disabled={isPending}
         className={`
           ${STATUS_COLORS[task.status]}
@@ -101,7 +107,7 @@ function StatusChip({ task }: { task: Task }) {
           className="
             absolute right-0 top-full z-50 mt-1.5
             min-w-[148px] overflow-hidden
-            rounded-xl border border-border
+            rounded-lg border border-border
             bg-surface shadow-lg
           "
           onClick={(e) => e.stopPropagation()}
@@ -118,10 +124,10 @@ function StatusChip({ task }: { task: Task }) {
                 ${s === task.status ? 'opacity-50 pointer-events-none' : ''}
               `}
             >
-              <span className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[s].split(' ')[1].replace('text-', 'bg-')}`} />
-              <span className={STATUS_COLORS[s].split(' ')[1]}>
-                {STATUS_LABELS[s]}
-              </span>
+              <span
+                className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[s].split(' ')[1].replace('text-', 'bg-')}`}
+              />
+              <span className={STATUS_COLORS[s].split(' ')[1]}>{STATUS_LABELS[s]}</span>
             </button>
           ))}
         </div>
@@ -170,7 +176,7 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
       }}
       className="
         flex w-full items-center justify-between
-        rounded-xl border border-border
+        rounded-lg border border-border
         bg-surface
         p-4
         transition-all duration-200
@@ -247,4 +253,3 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
     </div>
   );
 }
-

@@ -50,7 +50,7 @@ export default function StatusSelect({ value, onChange }: StatusSelectProps) {
               key={status.value}
               type="button"
               onClick={() => onChange(status.value)}
-              className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition-all duration-200 hover:scale-[1.02]"
+              className="flex items-center gap-3 rounded-lg border px-4 py-3 text-sm transition-all duration-200 hover:scale-[1.02]"
               style={{
                 borderColor: active
                   ? 'var(--primary)'

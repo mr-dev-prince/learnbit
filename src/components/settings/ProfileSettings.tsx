@@ -69,7 +69,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
   return (
     <div className="grid gap-6">
       <div
-        className="rounded-2xl border p-6"
+        className="rounded-lg border p-6"
         style={{
           borderColor: 'var(--border)',
           backgroundColor: 'var(--card-background)',
@@ -79,7 +79,10 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
           <UserRound size={20} style={{ color: 'var(--primary)' }} />
           Profile
         </h2>
-        <p className="mt-2 text-sm" style={{ color: 'color-mix(in srgb, var(--foreground) 68%, transparent)' }}>
+        <p
+          className="mt-2 text-sm"
+          style={{ color: 'color-mix(in srgb, var(--foreground) 68%, transparent)' }}
+        >
           Manage how your account appears across Learnbit.
         </p>
 
@@ -91,7 +94,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="Your name"
-              className="w-full rounded-2xl border px-4 py-3 text-sm outline-none"
+              className="w-full rounded-lg border px-4 py-3 text-sm outline-none"
               style={{
                 borderColor: 'var(--border)',
                 backgroundColor: 'color-mix(in srgb, var(--background) 18%, transparent)',
@@ -105,7 +108,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
               type="email"
               value={email}
               disabled
-              className="w-full rounded-2xl border px-4 py-3 text-sm opacity-70 outline-none"
+              className="w-full rounded-lg border px-4 py-3 text-sm opacity-70 outline-none"
               style={{
                 borderColor: 'var(--border)',
                 backgroundColor: 'color-mix(in srgb, var(--background) 12%, transparent)',
@@ -116,10 +119,9 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
           <button
             type="submit"
             disabled={isSavingProfile}
-            className="inline-flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold"
+            className="inline-flex items-center gap-2 text-white rounded-lg px-4 py-3 text-sm font-semibold"
             style={{
               backgroundColor: 'var(--primary)',
-              color: '#0f172a',
             }}
           >
             <Save size={16} />
@@ -129,7 +131,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
       </div>
 
       <div
-        className="rounded-2xl border p-6"
+        className="rounded-lg border p-6"
         style={{
           borderColor: 'var(--border)',
           backgroundColor: 'var(--card-background)',
@@ -139,7 +141,10 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
           <LockKeyhole size={20} style={{ color: 'var(--primary)' }} />
           Security
         </h2>
-        <p className="mt-2 text-sm" style={{ color: 'color-mix(in srgb, var(--foreground) 68%, transparent)' }}>
+        <p
+          className="mt-2 text-sm"
+          style={{ color: 'color-mix(in srgb, var(--foreground) 68%, transparent)' }}
+        >
           Update your password or end the current session.
         </p>
 
@@ -153,7 +158,7 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
               minLength={6}
               required
               placeholder="Create a new password"
-              className="w-full rounded-2xl border px-4 py-3 text-sm outline-none"
+              className="w-full rounded-lg border px-4 py-3 text-sm outline-none"
               style={{
                 borderColor: 'var(--border)',
                 backgroundColor: 'color-mix(in srgb, var(--background) 18%, transparent)',
@@ -165,23 +170,18 @@ export default function ProfileSettings({ email, fullName }: ProfileSettingsProp
             <button
               type="submit"
               disabled={isSavingPassword}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold"
+              className="inline-flex items-center text-white justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold"
               style={{
                 backgroundColor: 'var(--primary)',
-                color: '#0f172a',
               }}
             >
               <Save size={16} />
               {isSavingPassword ? 'Updating...' : 'Update password'}
             </button>
 
-            <LogoutButton
-              className="inline-flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold"
-            />
+            <LogoutButton className="inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-semibold" />
           </div>
         </form>
-
-
       </div>
     </div>
   );

@@ -35,7 +35,9 @@ function MiniBarChart({ values }: { values: number[] }) {
   return (
     <div className="mt-5">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted/60">This week</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted/60">
+          This week
+        </p>
         <p className="text-[10px] font-bold text-primary">
           {total} task{total !== 1 ? 's' : ''} completed
         </p>
@@ -97,7 +99,7 @@ function ProgressOverviewCard() {
   const activity = weeklyCompletionsFromTasks(tasks);
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-lg border border-border bg-surface p-5">
       <div className="mb-4 flex items-center gap-2">
         <TrendingUp size={15} className="text-primary" />
         <p className="text-sm font-bold uppercase text-foreground">Progress Overview</p>
@@ -115,13 +117,13 @@ function ProgressOverviewCard() {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5">
-        <div className="rounded-xl bg-surface-muted px-4 py-3">
+        <div className="rounded-lg bg-surface-muted px-4 py-3">
           <div className="mb-1 flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-wider text-text-muted">
             Tasks Done
           </div>
           <span className="text-2xl font-black text-(--completed-text)">{completed}</span>
         </div>
-        <div className="rounded-xl bg-surface-muted px-4 py-3">
+        <div className="rounded-lg bg-surface-muted px-4 py-3">
           <div className="mb-1 flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-wider text-text-muted">
             In Progress
           </div>
@@ -139,7 +141,7 @@ function RevisionStreakCard() {
   const pending = revisions.length;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-primary p-5">
+    <div className="relative overflow-hidden rounded-lg bg-primary p-5">
       <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10" />
       <div className="pointer-events-none absolute -bottom-8 -right-2 h-32 w-32 rounded-full bg-white/5" />
 
@@ -156,7 +158,7 @@ function RevisionStreakCard() {
         <button
           onClick={() => router.push('/revision-queue')}
           className="
-            w-full rounded-xl bg-white px-4 py-2.5
+            w-full rounded-lg bg-white px-4 py-2.5
             text-sm font-bold text-primary shadow-sm transition-all duration-200
             hover:bg-white/90 active:scale-[0.98]
           "

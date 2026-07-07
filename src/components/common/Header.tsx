@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
 
   return (
     <header
-      className="sticky top-0 z-40 shadow-md bg-(--sidebar-header-background) backdrop-blur-xl"
+      className="sticky top-0 z-40 border-b border-border bg-(--sidebar-header-background) backdrop-blur-xl"
       style={{ borderBottomColor: 'var(--border)' }}
     >
       <div className="flex items-center justify-between gap-4 px-6 py-2 lg:px-8">

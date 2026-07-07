@@ -18,7 +18,6 @@ interface RouteContext {
   }>;
 }
 
-/** GET /api/tasks/:id/revisions — list all revisions for a task */
 export const GET = (_request: NextRequest, context: RouteContext) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();
@@ -27,7 +26,6 @@ export const GET = (_request: NextRequest, context: RouteContext) =>
     return new ApiResponse(revisions);
   });
 
-/** POST /api/tasks/:id/revisions — mark a task for revision */
 export const POST = (request: NextRequest, context: RouteContext) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();
@@ -41,7 +39,6 @@ export const POST = (request: NextRequest, context: RouteContext) =>
     return new ApiResponse(revision, 'Task marked for revision', 201);
   });
 
-/** DELETE /api/tasks/:id/revisions — unmark (remove latest pending revision) */
 export const DELETE = (_request: NextRequest, context: RouteContext) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();

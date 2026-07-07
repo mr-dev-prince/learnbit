@@ -105,12 +105,12 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
   return (
     <div
       className={`
-        rounded-2xl border bg-surface transition-all duration-300
+        rounded-lg border bg-surface transition-all duration-300
         ${due.overdue ? 'border-red-500/40 shadow-[0_0_0_1px_rgba(239,68,68,0.08)]' : 'border-border'}
       `}
     >
       <div className="flex items-start gap-4 p-5">
-        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-xs font-bold text-primary">
+        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold text-primary">
           #{revision.revisionNumber + 1}
         </div>
         <div className="min-w-0 flex-1">
@@ -211,7 +211,7 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
                 rows={4}
                 placeholder="What did you remember? What was tricky?"
                 className="
-                  w-full resize-none rounded-xl border border-border
+                  w-full resize-none rounded-lg border border-border
                   bg-surface-muted px-4 py-3 text-sm leading-6 text-foreground
                   outline-none transition-colors placeholder:text-text-muted/40
                   focus:border-primary/40 focus:ring-2 focus:ring-primary/10
@@ -230,7 +230,7 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
                 value={intervalDays}
                 onChange={(e) => setIntervalDays(Math.max(1, parseInt(e.target.value) || 1))}
                 className="
-                  w-full rounded-xl border border-border bg-surface-muted
+                  w-full rounded-lg border border-border bg-surface-muted
                   px-4 py-2.5 text-sm text-foreground outline-none
                   transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10
                 "
@@ -246,7 +246,7 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
                 value={scheduledAt}
                 onChange={(e) => setScheduledAt(e.target.value)}
                 className="
-                  w-full rounded-xl border border-border bg-surface-muted
+                  w-full rounded-lg border border-border bg-surface-muted
                   px-4 py-2.5 text-sm text-foreground outline-none
                   transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10
                 "
@@ -259,7 +259,7 @@ function RevisionCard({ revision }: { revision: PendingRevisionWithTask }) {
                 <FileText size={12} />
                 Task Notes
               </p>
-              <div className="rounded-xl border border-border/60 bg-surface-muted/60 px-4 py-3 text-sm leading-6 text-foreground/80">
+              <div className="rounded-lg border border-border/60 bg-surface-muted/60 px-4 py-3 text-sm leading-6 text-foreground/80">
                 <p className="whitespace-pre-wrap">{revision.task.notes}</p>
               </div>
             </div>
@@ -358,7 +358,7 @@ function QueueStatsCard({ revisions }: { revisions: PendingRevisionWithTask[] })
   ];
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-lg border border-border bg-surface p-5">
       <p className="mb-4 flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-text-muted">
         <Sparkles size={12} />
         Queue Overview
@@ -367,7 +367,7 @@ function QueueStatsCard({ revisions }: { revisions: PendingRevisionWithTask[] })
         {stats.map((s) => (
           <div
             key={s.label}
-            className={`flex items-center justify-between rounded-xl px-4 py-3 ${s.bg}`}
+            className={`flex items-center justify-between rounded-lg px-4 py-3 ${s.bg}`}
           >
             <div className="flex items-center gap-2.5">
               {s.icon}
@@ -383,8 +383,8 @@ function QueueStatsCard({ revisions }: { revisions: PendingRevisionWithTask[] })
 
 function EmptyQueue() {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-20 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/6 text-primary/30">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-20 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-primary/6 text-primary/30">
         <Sparkles size={28} strokeWidth={1.5} />
       </div>
       <h3 className="mb-1.5 text-xl font-semibold text-foreground/80">Queue is clear!</h3>
@@ -433,7 +433,7 @@ export default function RevisionQueuePage() {
           </p>
         </div>
         {revisions.length > 0 && (
-          <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5">
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2.5">
             <Clock size={14} className="text-text-muted" />
             <span className="text-sm font-semibold text-foreground">{revisions.length}</span>
             <span className="text-sm text-text-muted">pending</span>
@@ -443,7 +443,7 @@ export default function RevisionQueuePage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
         <div className="space-y-4">
           {revisions.length > 0 && (
-            <div className="flex gap-1.5 rounded-xl border border-border bg-surface-muted p-1">
+            <div className="flex gap-1.5 rounded-lg border border-border bg-surface-muted p-1">
               {FILTERS.map(({ key, label }) => (
                 <button
                   key={key}
@@ -468,12 +468,12 @@ export default function RevisionQueuePage() {
               {[...Array(3)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-24 animate-pulse rounded-2xl border border-border bg-surface"
+                  className="h-24 animate-pulse rounded-lg border border-border bg-surface"
                 />
               ))}
             </div>
           ) : isError ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/5 py-16 text-center">
+            <div className="flex flex-col items-center justify-center rounded-lg border border-red-500/20 bg-red-500/5 py-16 text-center">
               <p className="font-semibold text-red-500">Failed to load revision queue</p>
               <p className="mt-1 text-sm text-text-muted">Please refresh the page and try again</p>
             </div>

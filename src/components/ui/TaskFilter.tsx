@@ -11,7 +11,7 @@ const FILTERS: TaskFilterPeriod[] = ['Daily', 'Weekly', 'Monthly'];
 
 export default function TaskFilter({ selected, setSelected }: TaskFilterProps) {
   return (
-    <div className="inline-flex items-center rounded-xl border border-border bg-surface-muted p-1">
+    <div className="inline-flex items-center rounded-lg border border-border bg-surface-muted p-1">
       {FILTERS.map((filter) => {
         const active = selected === filter;
 

@@ -13,7 +13,7 @@ import TaskViewModal from './TaskViewModal';
 
 function TaskSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-border bg-surface px-4 py-3.5">
+    <div className="animate-pulse rounded-lg border border-border bg-surface px-4 py-3.5">
       <div className="flex items-start gap-3">
         {/* Status dot */}
         <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-border" />
@@ -35,8 +35,8 @@ function TaskSkeleton() {
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-5 rounded-2xl border border-dashed border-border bg-surface/50 px-6 py-16 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/8 text-primary/40">
+    <div className="flex flex-col items-center justify-center gap-5 rounded-lg border border-dashed border-border bg-surface/50 px-6 py-16 text-center">
+      <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary/8 text-primary/40">
         <ClipboardList size={30} strokeWidth={1.5} />
       </div>
       <div className="space-y-1.5">
@@ -48,7 +48,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       <button
         onClick={onAdd}
         className="
-          flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5
+          flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5
           text-sm font-semibold text-white shadow-sm transition-all duration-200
           hover:opacity-90 hover:shadow-[0_4px_16px_-4px_rgba(var(--primary-rgb),0.5)]
           active:scale-[0.98]
@@ -69,8 +69,8 @@ function NoMatchState({ period }: { period: TaskFilterPeriod }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-surface/50 px-6 py-14 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/8 text-primary/40">
+    <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-surface/50 px-6 py-14 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/8 text-primary/40">
         <CalendarOff size={26} strokeWidth={1.5} />
       </div>
       <div className="space-y-1">
@@ -114,7 +114,7 @@ export default function TaskBox({ filter }: { filter: TaskFilterPeriod }) {
 
   return (
     <>
-      <div className="flex flex-col h-fit rounded-2xl border border-border gap-3 bg-surface p-4">
+      <div className="flex flex-col h-fit rounded-lg border border-border gap-3 bg-surface p-4">
         {filteredTasks.map((task) => (
           <TaskElement key={task.id} task={task} onClick={() => setSelectedTask(task)} />
         ))}

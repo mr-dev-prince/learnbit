@@ -36,9 +36,6 @@ function timeAgo(iso: string): string {
   return `${Math.floor(days / 30)}mo ago`;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              Stat pill                                     */
-/* -------------------------------------------------------------------------- */
 function StatPill({
   icon,
   label,
@@ -51,8 +48,8 @@ function StatPill({
   color: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-5 py-4">
-      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${color}`}>
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-surface px-5 py-4">
+      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${color}`}>
         {icon}
       </div>
       <div>
@@ -65,9 +62,6 @@ function StatPill({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                           Completed task card                              */
-/* -------------------------------------------------------------------------- */
 function CompletedCard({ task, onClick }: { task: Task; onClick: () => void }) {
   return (
     <div
@@ -82,19 +76,16 @@ function CompletedCard({ task, onClick }: { task: Task; onClick: () => void }) {
       }}
       className="
         group flex cursor-pointer items-start gap-4
-        rounded-2xl border border-border
+        rounded-lg border border-border
         bg-surface p-5
         transition-all duration-200
         hover:border-(--completed-text)/20
         hover:shadow-sm
       "
     >
-      {/* Check icon */}
-      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-(--completed-bg) text-(--completed-text)">
+      <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-(--completed-bg) text-(--completed-text)">
         <CheckCircle2 size={17} strokeWidth={2.5} />
       </div>
-
-      {/* Content */}
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-base font-semibold text-foreground transition-colors group-hover:text-(--completed-text)">
           {task.title}
@@ -127,13 +118,10 @@ function CompletedCard({ task, onClick }: { task: Task; onClick: () => void }) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              Empty state                                   */
-/* -------------------------------------------------------------------------- */
 function EmptyState({ hasFilter }: { hasFilter: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border py-24 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/6 text-primary/30">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-24 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-primary/6 text-primary/30">
         {hasFilter ? (
           <Search size={28} strokeWidth={1.5} />
         ) : (
@@ -152,9 +140,6 @@ function EmptyState({ hasFilter }: { hasFilter: boolean }) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                  Page                                      */
-/* -------------------------------------------------------------------------- */
 type SortKey = 'recent' | 'oldest' | 'alpha';
 
 export default function CompletedPage() {
@@ -225,13 +210,10 @@ export default function CompletedPage() {
 
   return (
     <div className="space-y-8">
-      {/* ── Header ── */}
       <div className="p-2">
         <h1 className="mb-1.5 text-3xl font-bold font-sans">Completed</h1>
         <p className="text-sm text-text-muted">Your learning milestones and finished tasks</p>
       </div>
-
-      {/* ── Stats ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <StatPill
           icon={<CheckCircle2 size={17} className="text-(--completed-text)" />}
@@ -252,11 +234,8 @@ export default function CompletedPage() {
           color="bg-surface-muted"
         />
       </div>
-
-      {/* ── Controls ── */}
       {totalCompleted > 0 && (
         <div className="flex flex-wrap items-center gap-3">
-          {/* Search */}
           <div className="relative flex-1 min-w-48">
             <Search
               size={14}
@@ -268,16 +247,14 @@ export default function CompletedPage() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search completed tasks…"
               className="
-                w-full rounded-xl border border-border bg-surface
+                w-full rounded-lg border border-border bg-surface
                 py-2.5 pl-9 pr-4 text-sm text-foreground
                 outline-none placeholder:text-text-muted/40
                 transition-colors focus:border-primary/40 focus:ring-2 focus:ring-primary/10
               "
             />
           </div>
-
-          {/* Sort */}
-          <div className="flex gap-1 rounded-xl border border-border bg-surface-muted p-1">
+          <div className="flex gap-1 rounded-lg border border-border bg-surface-muted p-1">
             {(
               [
                 { key: 'recent', label: 'Recent', icon: <SortDesc size={13} /> },
@@ -300,14 +277,12 @@ export default function CompletedPage() {
           </div>
         </div>
       )}
-
-      {/* ── Task list ── */}
       {isLoading ? (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-24 animate-pulse rounded-2xl border border-border bg-surface"
+              className="h-24 animate-pulse rounded-lg border border-border bg-surface"
             />
           ))}
         </div>
@@ -320,8 +295,6 @@ export default function CompletedPage() {
           ))}
         </div>
       )}
-
-      {/* ── Task detail modal ── */}
       <TaskViewModal
         task={selectedTask}
         isOpen={selectedTask !== null}

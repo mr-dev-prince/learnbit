@@ -46,7 +46,7 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
           type="datetime-local"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-2xl border border-border bg-surface px-4 py-3 pr-12 outline-none"
+          className="w-full rounded-lg border border-border bg-surface px-4 py-3 pr-12 outline-none"
         />
 
         {value && (

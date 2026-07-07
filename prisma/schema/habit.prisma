@@ -1,0 +1,20 @@
+model Habit {
+    id          String     @id @default(cuid())
+    userId      String
+    title       String
+    description String?
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    logs        HabitLog[]
+}
+
+model HabitLog {
+    id        String   @id @default(cuid())
+    habitId   String
+    habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+    date      DateTime @db.Date
+    createdAt DateTime @default(now())
+
+    @@unique([habitId, date])
+    @@index([habitId])
+}

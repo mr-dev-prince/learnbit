@@ -102,7 +102,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
               value={form.title}
               onChange={(e) => updateField('title', e.target.value)}
               placeholder="Build authentication middleware"
-              className="w-full rounded-2xl border px-4 py-3 outline-none transition-all focus:ring-2"
+              className="w-full rounded-lg border px-4 py-3 outline-none transition-all focus:ring-2"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
                 background: 'color-mix(in srgb, var(--background) 15%, transparent)',
@@ -127,7 +127,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
               value={form.description}
               onChange={(e) => updateField('description', e.target.value)}
               placeholder="Describe the goal of this task..."
-              className="w-full resize-none rounded-2xl border px-4 py-3 outline-none"
+              className="w-full resize-none rounded-lg border px-4 py-3 outline-none"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
                 background: 'color-mix(in srgb, var(--background) 15%, transparent)',
@@ -143,7 +143,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
               value={form.notes}
               onChange={(e) => updateField('notes', e.target.value)}
               placeholder="Anything important you want to remember..."
-              className="w-full resize-none rounded-2xl border px-4 py-3 outline-none"
+              className="w-full resize-none rounded-lg border px-4 py-3 outline-none"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
                 background: 'color-mix(in srgb, var(--background) 15%, transparent)',
@@ -181,7 +181,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
 
       {error && (
         <div
-          className="rounded-2xl border px-4 py-3 text-sm"
+          className="rounded-lg border px-4 py-3 text-sm"
           style={{
             borderColor: 'rgb(239 68 68 / .35)',
             background: 'rgb(239 68 68 / .08)',
@@ -211,7 +211,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
                 onSuccess();
               }
             }}
-            className="rounded-2xl border p-3 font-medium transition-all hover:opacity-80"
+            className="rounded-lg border p-3 font-medium transition-all hover:opacity-80"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
             }}
@@ -222,7 +222,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
           <button
             type="submit"
             disabled={createTask.isPending}
-            className="inline-flex min-w-40 items-center justify-center gap-2 rounded-2xl p-3 font-semibold transition-all hover:scale-[1.02] disabled:opacity-60"
+            className="inline-flex min-w-40 items-center justify-center gap-2 rounded-lg p-3 font-semibold transition-all hover:scale-[1.02] disabled:opacity-60"
             style={{
               background: 'var(--primary)',
               color: '#0f172a',

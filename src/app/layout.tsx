@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Learnbit',
-  description: 'Learnbit learning platform',
+  title: 'Learnbit : Personal task manager & habit tracker',
+  description: 'Learnbit is a personal task manager & habit tracker',
 };
 
 export default function RootLayout({

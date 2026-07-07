@@ -168,7 +168,7 @@ export default function TaskViewModal({
           w-full
           max-w-2xl
           overflow-hidden
-          rounded-2xl
+          rounded-lg
           border
           border-border
           bg-surface
@@ -271,7 +271,7 @@ export default function TaskViewModal({
                     className="
                       w-full
                       resize-none
-                      rounded-xl
+                      rounded-lg
                       border
                       border-border
                       bg-surface-muted
@@ -295,7 +295,7 @@ export default function TaskViewModal({
                   className="
                     min-h-[80px]
                     cursor-pointer
-                    rounded-xl
+                    rounded-lg
                     border
                     border-border/60
                     bg-surface-muted/60
@@ -335,7 +335,7 @@ export default function TaskViewModal({
                     className="
                       w-full
                       resize-none
-                      rounded-xl
+                      rounded-lg
                       border
                       border-border
                       bg-surface-muted
@@ -359,7 +359,7 @@ export default function TaskViewModal({
                   className="
                     min-h-[80px]
                     cursor-pointer
-                    rounded-xl
+                    rounded-lg
                     border
                     border-border/60
                     bg-surface-muted/60
@@ -412,7 +412,7 @@ export default function TaskViewModal({
                         items-center
                         justify-between
                         gap-3
-                        rounded-xl
+                        rounded-lg
                         border
                         border-border/60
                         bg-surface-muted/40
@@ -487,7 +487,7 @@ export default function TaskViewModal({
                     flex-col
                     items-center
                     justify-center
-                    rounded-xl
+                    rounded-lg
                     border
                     border-dashed
                     border-border/50
@@ -495,7 +495,7 @@ export default function TaskViewModal({
                     text-center
                   "
                 >
-                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/6 text-primary/30">
+                  <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/6 text-primary/30">
                     <Sparkles size={20} strokeWidth={1.5} />
                   </div>
                   <p className="text-sm font-medium text-text-muted/50">No resources attached</p>

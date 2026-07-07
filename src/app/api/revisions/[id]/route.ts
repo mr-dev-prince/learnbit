@@ -15,7 +15,6 @@ interface RouteContext {
 
 const VALID_STATUSES: RevisionStatus[] = ['PENDING', 'COMPLETED', 'SKIPPED'];
 
-/** PATCH /api/revisions/:id — complete, skip, or update a revision's notes/interval */
 export const PATCH = (request: NextRequest, context: RouteContext) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();

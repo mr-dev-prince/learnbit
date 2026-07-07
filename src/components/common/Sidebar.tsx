@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus, CalendarDays } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
 import QuickAddModal from '../tasks/QuickAddModal';
@@ -37,6 +37,12 @@ const Sidebar: React.FC = () => {
       href: '/revision-queue',
     },
     {
+      id: 'habit-tracker',
+      label: 'Habit Tracker',
+      icon: <CalendarDays size={24} />,
+      href: '/habits',
+    },
+    {
       id: 'suggestions',
       label: 'Suggestions',
       icon: <Lightbulb size={24} />,
@@ -54,7 +60,7 @@ const Sidebar: React.FC = () => {
         }`}
       />
       <aside
-        className={`fixed left-0 top-0 z-30 flex h-screen flex-col shadow-md transition-all duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-30 flex h-screen flex-col border border-border transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-20' : 'w-56'
         } bg-(--sidebar-header-background) backdrop-blur-xl`}
         style={{ borderRightColor: 'var(--border)' }}
@@ -80,7 +86,7 @@ const Sidebar: React.FC = () => {
               style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
             >
               l<span className="text-orange-600 text-5xl font-black leading-none">b.</span>
-            </Link> 
+            </Link>
           )}
         </div>
 

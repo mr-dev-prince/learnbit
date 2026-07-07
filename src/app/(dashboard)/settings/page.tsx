@@ -28,9 +28,7 @@ export default async function SettingsPage() {
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.1fr)_360px]">
         <ProfileSettings email={user.email ?? ''} fullName={fullName} />
 
-        <div
-          className="rounded-2xl border border-border bg-card-background p-6"
-        >
+        <div className="rounded-lg border border-border bg-card-background p-6">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-foreground">
             <Settings size={20} style={{ color: 'var(--primary)' }} />
             Learning Preferences
