@@ -60,7 +60,7 @@ const Sidebar: React.FC = () => {
         }`}
       />
       <aside
-        className={`fixed left-0 top-0 z-30 flex h-screen flex-col border border-border transition-all duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 z-30 flex h-screen flex-col border-r border-border transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-20' : 'w-56'
         } bg-(--sidebar-header-background) backdrop-blur-xl`}
         style={{ borderRightColor: 'var(--border)' }}

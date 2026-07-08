@@ -51,18 +51,6 @@ const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
             {theme === 'dark' ? <SunMedium size={18} /> : <MoonStar size={18} />}
           </button>
 
-          <button
-            className="relative rounded-lg border p-2 transition-all duration-200 hover:bg-surface/80"
-            style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
-            aria-label="Notifications"
-          >
-            <Bell size={18} />
-            <span
-              className="absolute top-1 right-1 h-1 w-1 rounded-full"
-              style={{ backgroundColor: 'var(--tertiary)' }}
-            />
-          </button>
-
           <div className="h-6 w-px bg-border" />
 
           <Link

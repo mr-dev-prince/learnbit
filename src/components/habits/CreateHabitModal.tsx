@@ -44,7 +44,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
 
       {/* Modal */}
-      <div className="relative flex w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
+      <div className="relative flex w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
         {/* Gradient Accent */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-32"

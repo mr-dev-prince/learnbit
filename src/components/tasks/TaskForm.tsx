@@ -1,6 +1,6 @@
 'use client';
 
-import { SubmitEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 
@@ -65,7 +65,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
     }));
   };
 
-  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     try {
@@ -154,7 +154,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
 
         <div className="space-y-4">
           <div
-            className="rounded-3xl border p-4"
+            className="rounded-lg border p-4"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
             }}

@@ -12,6 +12,7 @@ import {
 } from '@/hooks/useTasks';
 import type { Task, TaskStatus } from '@/types/Task';
 import Switch from './Switch';
+import ConfirmationModal from './ConfirmationModal';
 
 interface TaskElementProps {
   task: Task;
@@ -137,6 +138,7 @@ function StatusChip({ task }: { task: Task }) {
 }
 
 export default function TaskElement({ task, onClick, onDeleted }: TaskElementProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { mutate: deleteTask, isPending: isDeleting } = useDeleteTask();
 
   const { data: revisions = [] } = useTaskRevisions(task.id);
@@ -223,13 +225,7 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
           disabled={isDeleting}
           onClick={(e) => {
             e.stopPropagation();
-            deleteTask(task.id, {
-              onSuccess: () => {
-                toast.success('Task deleted');
-                onDeleted?.();
-              },
-              onError: () => toast.error('Failed to delete task'),
-            });
+            setShowDeleteConfirm(true);
           }}
           className="
             flex
@@ -250,6 +246,25 @@ export default function TaskElement({ task, onClick, onDeleted }: TaskElementPro
           <Trash2 size={15} />
         </button>
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={() => {
+          deleteTask(task.id, {
+            onSuccess: () => {
+              toast.success('Task deleted');
+              setShowDeleteConfirm(false);
+              onDeleted?.();
+            },
+            onError: () => toast.error('Failed to delete task'),
+          });
+        }}
+        title="Delete Task"
+        description="Are you sure you want to delete this task ? This action cannot be undone."
+        confirmText="Delete"
+        isPending={isDeleting}
+      />
     </div>
   );
 }

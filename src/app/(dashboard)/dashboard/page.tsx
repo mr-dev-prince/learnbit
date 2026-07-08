@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-3 h-full">
-      <div className="flex w-full justify-between items-center p-2">
+      <div className="flex flex-col sm:flex-row w-full sm:justify-between items-start sm:items-center gap-4 sm:gap-0 p-2">
         <div className="space-y-1">
           <p className="text-3xl font-bold font-sans">Focused Session</p>
           <p className="text-sm text-text-muted">

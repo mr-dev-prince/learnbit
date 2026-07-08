@@ -18,7 +18,7 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
 
       {/* Modal */}
-      <div className="relative flex h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
+      <div className="relative flex h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
         {/* Gradient Accent */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-32"
@@ -53,8 +53,6 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
             <X size={18} />
           </button>
         </div>
-
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto px-4 py-3">
           <TaskForm onSuccess={onClose} />
         </div>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Strands from '@/components/ui/Strands';
 import { createClient } from '@/utils/supabase/client';
+import googleIcon from '../../assets/google.png';
+import Image from 'next/image';
 
 type AuthMode = 'login' | 'signup';
 
@@ -16,27 +18,6 @@ interface FormState {
   email: string;
   password: string;
 }
-
-const GOOGLE_ICON = (
-  <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
-    <path
-      fill="#EA4335"
-      d="M12 10.2v3.9h5.5c-.2 1.3-.8 2.4-1.8 3.1l3 2.3c1.8-1.6 2.8-4.1 2.8-7 0-.7-.1-1.5-.2-2.3H12Z"
-    />
-    <path
-      fill="#4285F4"
-      d="M12 22c2.5 0 4.6-.8 6.2-2.2l-3-2.3c-.8.6-1.9 1-3.2 1-2.4 0-4.4-1.6-5.1-3.8l-3.1 2.4C5.4 20 8.4 22 12 22Z"
-    />
-    <path
-      fill="#FBBC05"
-      d="M6.9 14.7c-.2-.6-.3-1.2-.3-1.9s.1-1.3.3-1.9L3.8 8.5C3.3 9.6 3 10.8 3 12s.3 2.4.8 3.5l3.1-2.4Z"
-    />
-    <path
-      fill="#34A853"
-      d="M12 5.5c1.4 0 2.7.5 3.7 1.4l2.7-2.7C16.6 2.7 14.5 2 12 2 8.4 2 5.4 4 3.8 8.5l3.1 2.4c.7-2.2 2.7-3.8 5.1-3.8Z"
-    />
-  </svg>
-);
 
 const MODE_COPY: Record<
   AuthMode,
@@ -204,17 +185,8 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
       <div className="relative mx-auto flex min-h-screen max-w-7xl items-center px-6 py-16 sm:px-10 lg:px-12">
         <div className="grid w-full gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(380px,0.85fr)] lg:items-center">
           <section className="max-w-3xl">
-            <Link href="/" className="inline-flex items-center" aria-label="Learnbit home">
-              <p
-                className="text-5xl leading-none font-black sm:text-6xl"
-                style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
-              >
-                learn<span className="text-orange-600">bit.</span>
-              </p>
-            </Link>
-
             <div
-              className="mt-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm backdrop-blur-xl"
+              className="mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm backdrop-blur-xl"
               style={{
                 borderColor: 'color-mix(in srgb, var(--border) 70%, transparent)',
                 backgroundColor: 'color-mix(in srgb, var(--card-background) 66%, transparent)',
@@ -229,6 +201,14 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
               />
               {copy.eyebrow}
             </div>
+            <Link href="/" className=" items-center" aria-label="Learnbit home">
+              <p
+                className="text-7xl leading-none font-black sm:text-8xl"
+                style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
+              >
+                learn<span className="text-orange-600">bit.</span>
+              </p>
+            </Link>
 
             <h1
               className="mt-8 max-w-3xl text-5xl leading-[0.96] font-semibold tracking-[-0.04em] sm:text-6xl"
@@ -253,7 +233,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
               ].map((item) => (
                 <div
                   key={item}
-                  className="rounded-3xl border px-4 py-4 text-sm backdrop-blur-xl"
+                  className="rounded-lg border px-4 py-4 text-sm backdrop-blur-xl"
                   style={{
                     borderColor: 'color-mix(in srgb, var(--border) 68%, transparent)',
                     backgroundColor: 'color-mix(in srgb, var(--card-background) 54%, transparent)',
@@ -266,11 +246,10 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
           </section>
 
           <section
-            className="relative overflow-hidden rounded-4xl border p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+            className="relative overflow-hidden rounded-xl border p-6 shadow-sm backdrop-blur-2xl sm:p-8"
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 78%, transparent)',
               backgroundColor: 'color-mix(in srgb, var(--card-background) 74%, transparent)',
-              boxShadow: '0 40px 100px color-mix(in srgb, black 48%, transparent)',
             }}
           >
             <div
@@ -316,7 +295,7 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                   backgroundColor: 'color-mix(in srgb, var(--background) 16%, transparent)',
                 }}
               >
-                {GOOGLE_ICON}
+                <Image className="h-5 w-5" src={googleIcon} alt="google_icon" />
                 Continue with Google
               </button>
 
@@ -411,10 +390,9 @@ export default function AuthScreen({ mode }: AuthScreenProps) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-lg px-4 py-3.5 text-sm font-semibold transition-transform duration-200 disabled:opacity-60"
+                  className="w-full rounded-lg px-4 py-3.5 text-sm font-semibold transition-transform duration-200 disabled:opacity-60 text-white"
                   style={{
                     backgroundColor: 'var(--primary)',
-                    color: '#0f172a',
                     boxShadow: '0 16px 48px color-mix(in srgb, var(--primary) 32%, transparent)',
                   }}
                 >

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { CheckCircle2, Flame, Plus, Sparkles, Trash2 } from 'lucide-react';
+import { CheckCircle2, Flame, Plus, Sparkles, Trash2, Info, X } from 'lucide-react';
 import { useHabits } from '@/hooks/useHabits';
 import { CreateHabitModal } from '@/components/habits/CreateHabitModal';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import { toast } from 'react-hot-toast';
 import type { Habit } from '@/types/Habit';
 
@@ -11,6 +12,72 @@ function toLocalDateStr(d: Date): string {
   const offset = d.getTimezoneOffset();
   const local = new Date(d.getTime() - offset * 60_000);
   return local.toISOString().split('T')[0];
+}
+
+function HabitDetailsModal({
+  isOpen,
+  onClose,
+  habit,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  habit: Habit | null;
+}) {
+  if (!isOpen || !habit) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button aria-label="Close modal" onClick={onClose} className="absolute inset-0 cursor-default" />
+      <div
+        className="animate-in fade-in-0 zoom-in-[0.97] slide-in-from-bottom-3 relative flex w-full max-w-md flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-32"
+          style={{
+            background: 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)'
+          }}
+        />
+        <div className="relative flex shrink-0 items-start justify-between border-b border-border bg-surface px-6 py-5">
+          <h2 className="text-xl font-bold font-sans text-foreground">{habit.title}</h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="rounded-lg border border-border p-2 transition-all duration-200 hover:bg-surface-hover hover:rotate-90"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className="relative p-6">
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-text-muted">
+            Description
+          </h3>
+          {habit.description ? (
+            <p className="mb-6 text-sm leading-relaxed text-foreground whitespace-pre-wrap">
+              {habit.description}
+            </p>
+          ) : (
+            <p className="mb-6 text-sm italic text-text-muted opacity-60">
+              No description provided.
+            </p>
+          )}
+
+          <div className="flex items-center justify-end">
+            <button
+              onClick={onClose}
+              className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function buildDateWindow(days: number): string[] {
@@ -51,6 +118,7 @@ interface HeatmapRowProps {
   actingDate: string | null; 
   onToggle: (habitId: string, dateStr: string, currentlyDone: boolean) => void;
   onDelete: (habitId: string) => void;
+  onViewDetails: (habit: Habit) => void;
   isDeleting: boolean;
 }
 
@@ -61,8 +129,10 @@ function HeatmapRow({
   actingDate,
   onToggle,
   onDelete,
+  onViewDetails,
   isDeleting,
 }: HeatmapRowProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const logSet = useMemo(
     () => new Set((habit.logs ?? []).map((l) => l.date.split('T')[0])),
     [habit.logs],
@@ -85,16 +155,36 @@ function HeatmapRow({
             )}
           </div>
 
-          <button
-            onClick={() => onDelete(habit.id)}
-            disabled={isDeleting}
-            aria-label="Delete habit"
-            className="shrink-0 rounded-md p-1.5 text-text-muted opacity-0 transition-all
-              hover:bg-red-500/10 hover:text-red-500 group-hover:opacity-100
-              disabled:pointer-events-none disabled:opacity-30"
-          >
-            <Trash2 size={13} />
-          </button>
+          <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+            <button
+              onClick={() => onViewDetails(habit)}
+              aria-label="View habit details"
+              className="rounded-md p-1.5 text-text-muted transition-all hover:bg-primary/10 hover:text-primary"
+            >
+              <Info size={13} />
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={isDeleting}
+              aria-label="Delete habit"
+              className="rounded-md p-1.5 text-text-muted transition-all hover:bg-red-500/10 hover:text-red-500 disabled:pointer-events-none disabled:opacity-30"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
+
+          <ConfirmationModal
+            isOpen={showDeleteConfirm}
+            onClose={() => setShowDeleteConfirm(false)}
+            onConfirm={() => {
+              onDelete(habit.id);
+              setShowDeleteConfirm(false);
+            }}
+            title="Delete Habit"
+            description="Are you sure you want to delete this habit ? This action cannot be undone."
+            confirmText="Delete"
+            isPending={isDeleting}
+          />
         </div>
       </td>
 
@@ -254,6 +344,7 @@ const HabitTracker = () => {
     useHabits();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [actingDate, setActingDate] = useState<string | null>(null);
   const [actingDelete, setActingDelete] = useState<Record<string, boolean>>({});
 
@@ -274,7 +365,6 @@ const HabitTracker = () => {
   };
 
   const handleDeleteHabit = async (habitId: string) => {
-    if (!window.confirm('Are you sure you want to delete this habit?')) return;
     setActingDelete((p) => ({ ...p, [habitId]: true }));
     try {
       await deleteHabit(habitId);
@@ -350,8 +440,8 @@ const HabitTracker = () => {
       {habits.length === 0 ? (
         <EmptyHabits onAdd={() => setIsModalOpen(true)} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
-          <div className="rounded-lg border border-border bg-surface">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
+          <div className="rounded-lg border border-border bg-surface min-w-0">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
               <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
                 Last {WINDOW} Days
@@ -393,6 +483,7 @@ const HabitTracker = () => {
                       actingDate={actingDate}
                       onToggle={handleToggle}
                       onDelete={handleDeleteHabit}
+                      onViewDetails={setSelectedHabit}
                       isDeleting={actingDelete[habit.id] ?? false}
                     />
                   ))}
@@ -410,6 +501,12 @@ const HabitTracker = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateHabit}
+      />
+
+      <HabitDetailsModal
+        isOpen={selectedHabit !== null}
+        onClose={() => setSelectedHabit(null)}
+        habit={selectedHabit}
       />
     </div>
   );

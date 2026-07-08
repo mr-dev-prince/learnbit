@@ -5,7 +5,7 @@ import { Flame, TrendingUp } from 'lucide-react';
 import TaskBox from './TaskBox';
 import { useTasks } from '@/hooks/useTasks';
 import { useRevisionQueue } from '@/hooks/useRevisions';
-import type { TaskFilterPeriod } from '@/lib/filterTasks';
+import { filterTasksByPeriod, type TaskFilterPeriod } from '@/lib/filterTasks';
 
 function weeklyCompletionsFromTasks(tasks: { updatedAt: string; status: string }[]) {
   const days = Array(7).fill(0) as number[];
@@ -89,14 +89,17 @@ function MiniBarChart({ values }: { values: number[] }) {
   );
 }
 
-function ProgressOverviewCard() {
+function ProgressOverviewCard({ filter }: { filter: TaskFilterPeriod }) {
   const { data: tasks = [] } = useTasks();
 
-  const total = tasks.length;
-  const completed = tasks.filter((t) => t.status === 'COMPLETED').length;
-  const inProgress = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
+  const filteredTasks = filterTasksByPeriod(tasks, filter);
+  const total = filteredTasks.length;
+  const completed = filteredTasks.filter((t) => t.status === 'COMPLETED').length;
+  const inProgress = filteredTasks.filter((t) => t.status === 'IN_PROGRESS').length;
   const goalPct = total > 0 ? Math.round((completed / total) * 100) : 0;
   const activity = weeklyCompletionsFromTasks(tasks);
+
+  const goalLabel = filter === 'Daily' ? 'Daily Goal' : filter === 'Weekly' ? 'Weekly Goal' : 'Monthly Goal';
 
   return (
     <div className="rounded-lg border border-border bg-surface p-5">
@@ -106,7 +109,7 @@ function ProgressOverviewCard() {
       </div>
       <div className="mb-4">
         <div className="mb-1.5 flex items-center justify-between text-xs">
-          <span className="font-medium text-text-muted">Weekly Goal</span>
+          <span className="font-medium text-text-muted">{goalLabel}</span>
           <span className="font-bold text-primary">{goalPct}%</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-border">
@@ -172,12 +175,12 @@ function RevisionStreakCard() {
 
 const DashboardContent = ({ filter }: { filter: TaskFilterPeriod }) => {
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
-      <div>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
+      <div className="min-w-0">
         <TaskBox filter={filter} />
       </div>
       <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-        <ProgressOverviewCard />
+        <ProgressOverviewCard filter={filter} />
         <RevisionStreakCard />
       </div>
     </div>

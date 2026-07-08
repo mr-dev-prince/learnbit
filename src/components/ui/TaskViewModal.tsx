@@ -19,6 +19,7 @@ import {
 import type { Task } from '@/types/Task';
 import { useDeleteTask, useUpdateTask } from '@/hooks/useTasks';
 import { formatDateTime } from '@/utils/common/dateUtils';
+import ConfirmationModal from './ConfirmationModal';
 
 interface TaskViewModalProps {
   task: Task | null;
@@ -131,6 +132,7 @@ export default function TaskViewModal({
         onSuccess: () => {
           toast.success('Task updated');
           setIsEditing(false);
+          onClose();
         },
         onError: () => toast.error('Failed to update task'),
       },
@@ -608,81 +610,31 @@ export default function TaskViewModal({
                 </button>
               )}
 
-              {showDeleteConfirm ? (
-                <>
-                  <span className="text-sm text-text-muted mr-1">Sure?</span>
-                  <button
-                    onClick={() => setShowDeleteConfirm(false)}
-                    className="
-                      rounded-lg
-                      border
-                      border-border
-                      bg-transparent
-                      px-3
-                      py-2
-                      text-sm
-                      font-medium
-                      text-text-muted
-                      transition-all
-                      duration-200
-                      hover:bg-surface-hover
-                    "
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="
-                      flex
-                      items-center
-                      gap-1.5
-                      rounded-lg
-                      bg-red-500
-                      px-4
-                      py-2
-                      text-sm
-                      font-semibold
-                      text-white
-                      transition-all
-                      duration-200
-                      hover:bg-red-600
-                      active:scale-[0.98]
-                      disabled:pointer-events-none
-                      disabled:opacity-50
-                    "
-                  >
-                    <Trash2 size={14} />
-                    {isDeleting ? 'Deleting…' : 'Delete'}
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="
-                    flex
-                    items-center
-                    gap-1.5
-                    rounded-lg
-                    border
-                    border-border
-                    bg-transparent
-                    px-4
-                    py-2
-                    text-sm
-                    font-medium
-                    text-text-muted
-                    transition-all
-                    duration-200
-                    hover:border-red-500/30
-                    hover:bg-red-500/5
-                    hover:text-red-500
-                  "
-                >
-                  <Trash2 size={14} />
-                  Delete
-                </button>
-              )}
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="
+                  flex
+                  items-center
+                  gap-1.5
+                  rounded-lg
+                  border
+                  border-border
+                  bg-transparent
+                  px-4
+                  py-2
+                  text-sm
+                  font-medium
+                  text-text-muted
+                  transition-all
+                  duration-200
+                  hover:border-red-500/30
+                  hover:bg-red-500/5
+                  hover:text-red-500
+                "
+              >
+                <Trash2 size={14} />
+                Delete
+              </button>
 
               <button
                 onClick={handleStartEdit}
@@ -711,6 +663,16 @@ export default function TaskViewModal({
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete Task"
+        description="Are you sure you want to delete this task? This action cannot be undone."
+        confirmText="Delete"
+        isPending={isDeleting}
+      />
     </div>
   );
 }
