@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus, CalendarDays } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus, CalendarDays, Map } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
 import QuickAddModal from '../tasks/QuickAddModal';
@@ -47,6 +47,12 @@ const Sidebar: React.FC = () => {
       label: 'Suggestions',
       icon: <Lightbulb size={24} />,
       href: '/suggestions',
+    },
+    {
+      id: 'roadmaps',
+      label: 'Roadmaps',
+      icon: <Map size={24} />,
+      href: '/roadmaps',
     },
     { id: 'completed', label: 'Completed', icon: <CheckCircle size={24} />, href: '/completed' },
     { id: 'settings', label: 'Settings', icon: <Settings size={24} />, href: '/settings' },
