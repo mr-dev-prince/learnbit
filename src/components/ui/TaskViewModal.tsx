@@ -540,6 +540,9 @@ export default function TaskViewModal({
                 onClick={handleSave}
                 disabled={isUpdating}
                 className="
+                  flex
+                  items-center
+                  gap-2
                   rounded-lg
                   bg-primary
                   px-5
@@ -556,6 +559,9 @@ export default function TaskViewModal({
                   disabled:opacity-50
                 "
               >
+                {isUpdating && (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                )}
                 {isUpdating ? 'Saving…' : 'Save Changes'}
               </button>
             </>

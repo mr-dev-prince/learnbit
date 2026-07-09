@@ -22,10 +22,10 @@ export function deleteHabit(id: string) {
   return api.delete(`/api/habits/${id}`);
 }
 
-export function logHabitCompletion(id: string, date: string) {
-  return api.post<HabitLog>(`/api/habits/${id}/log`, { date });
+export function logHabitCompletion(id: string, date: string, timezoneOffset: number) {
+  return api.post<HabitLog>(`/api/habits/${id}/log`, { date, timezoneOffset });
 }
 
-export function undoHabitCompletion(id: string, date: string) {
-  return api.delete(`/api/habits/${id}/log?date=${encodeURIComponent(date)}`);
+export function undoHabitCompletion(id: string, date: string, timezoneOffset: number) {
+  return api.delete(`/api/habits/${id}/log?date=${encodeURIComponent(date)}&timezoneOffset=${timezoneOffset}`);
 }

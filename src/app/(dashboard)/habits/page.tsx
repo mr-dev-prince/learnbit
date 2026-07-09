@@ -108,7 +108,6 @@ function calcStreak(habit: Habit, dateWindow: string[]): number {
   return streak;
 }
 
-
 const WINDOW = 14; 
 
 interface HeatmapRowProps {
@@ -193,6 +192,7 @@ function HeatmapRow({
         const isBeforeCreation = dateStr < createdDay;
         const isDone = logSet.has(dateStr);
         const isToday = dateStr === todayStr;
+        const isPast = dateStr < todayStr;
         const key = `${habit.id}|${dateStr}`;
         const acting = actingDate === key;
 
@@ -209,18 +209,19 @@ function HeatmapRow({
         return (
           <td key={dateStr} className="px-0.5 py-3 text-center align-middle">
             <button
-              disabled={acting}
+              disabled={acting || isPast}
               onClick={() => onToggle(habit.id, dateStr, isDone)}
-              title={isDone ? `Undo: ${dateStr}` : `Mark done: ${dateStr}`}
+              title={isPast ? (isDone ? `Completed on ${dateStr}` : `Missed on ${dateStr}`) : (isDone ? `Undo: ${dateStr}` : `Mark done: ${dateStr}`)}
               className={`
                 mx-auto flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold
-                transition-all duration-200 hover:scale-110 hover:shadow-md active:scale-95
+                transition-all duration-200
+                ${!isPast ? 'hover:scale-110 hover:shadow-md active:scale-95' : 'opacity-70 cursor-default'}
                 ${acting ? 'animate-pulse opacity-60' : ''}
                 ${isToday ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}
                 ${
                   isDone
-                    ? 'bg-green-500/20 text-green-600 hover:bg-green-500/30 dark:bg-green-500/25 dark:text-green-400'
-                    : 'bg-red-500/15 text-red-500 hover:bg-red-500/25 dark:bg-red-500/20 dark:text-red-400'
+                    ? 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400' + (!isPast ? ' hover:bg-green-500/30' : '')
+                    : 'bg-red-500/15 text-red-500 dark:bg-red-500/20 dark:text-red-400' + (!isPast ? ' hover:bg-red-500/25' : '')
                 }
               `}
             >
@@ -380,11 +381,12 @@ const HabitTracker = () => {
     const key = `${habitId}|${dateStr}`;
     setActingDate(key);
     try {
+      const timezoneOffset = new Date().getTimezoneOffset();
       if (isDone) {
-        await undoCompletion({ id: habitId, date: dateStr });
+        await undoCompletion({ id: habitId, date: dateStr, timezoneOffset });
         toast.success('Marked as missed');
       } else {
-        await logCompletion({ id: habitId, date: dateStr });
+        await logCompletion({ id: habitId, date: dateStr, timezoneOffset });
         toast.success(dateStr === todayStr ? 'Habit completed for today! 🎉' : 'Day marked ✓');
       }
     } catch {

@@ -5,7 +5,7 @@ import type { RoadmapModule, ModulePayload, ModuleStatus } from '@/types/Roadmap
 interface ModuleFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: ModulePayload) => void;
+  onSubmit: (payload: ModulePayload) => Promise<void> | void;
   initialData?: RoadmapModule | null;
 }
 
@@ -13,6 +13,7 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ModuleStatus>('PLANNED');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -30,17 +31,22 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || isSubmitting) return;
 
-    onSubmit({
-      title,
-      description,
-      status,
-      order: initialData?.order,
-    });
-    onClose();
+    setIsSubmitting(true);
+    try {
+      await onSubmit({
+        title,
+        description,
+        status,
+        order: initialData?.order,
+      });
+      onClose();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -92,9 +98,11 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
               <input
                 type="text"
                 required
+                autoFocus
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                disabled={isSubmitting}
+                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors disabled:opacity-50"
                 placeholder="e.g. Introduction to React"
               />
             </div>
@@ -105,7 +113,8 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                disabled={isSubmitting}
+                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors disabled:opacity-50"
                 placeholder="What will you learn in this module?"
               />
             </div>
@@ -128,15 +137,20 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-lg px-5 py-2.5 text-sm font-semibold text-text-muted hover:bg-surface-hover hover:text-foreground transition-colors"
+                disabled={isSubmitting}
+                className="rounded-lg px-5 py-2.5 text-sm font-semibold text-text-muted hover:bg-surface-hover hover:text-foreground transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active:scale-95 transition-all"
+                disabled={isSubmitting || !title.trim()}
+                className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none"
               >
-                {initialData ? 'Save Changes' : 'Create Module'}
+                {isSubmitting && (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                )}
+                {isSubmitting ? (initialData ? 'Saving...' : 'Creating...') : (initialData ? 'Save Changes' : 'Create Module')}
               </button>
             </div>
           </form>

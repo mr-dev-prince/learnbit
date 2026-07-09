@@ -131,9 +131,13 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               <button
                 type="submit"
                 disabled={!title.trim() || isSubmitting}
-                className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
               >
-                <Plus size={18} />
+                {isSubmitting ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                ) : (
+                  <Plus size={18} />
+                )}
                 {isSubmitting ? 'Creating...' : 'Create Habit'}
               </button>
             </div>

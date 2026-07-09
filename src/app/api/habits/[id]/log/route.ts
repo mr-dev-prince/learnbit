@@ -17,9 +17,16 @@ export const POST = (request: NextRequest, { params }: RouteContext) =>
     
     const body = await request.json();
     const date = body.date; 
+    const timezoneOffset = body.timezoneOffset ? Number(body.timezoneOffset) : 0;
     
     if (!date) {
         throw new Error('`date` is required.');
+    }
+
+    const clientNow = new Date(Date.now() - timezoneOffset * 60000);
+    const clientToday = clientNow.toISOString().split('T')[0];
+    if (date < clientToday) {
+        throw new Error('Cannot modify habit for past days.');
     }
 
     const log = await logHabitCompletion(user.id, id, date);
@@ -32,9 +39,17 @@ export const DELETE = (request: NextRequest, { params }: RouteContext) =>
     const user = await getAuthenticatedUser();
     
     const date = request.nextUrl.searchParams.get('date');
+    const timezoneOffsetParam = request.nextUrl.searchParams.get('timezoneOffset');
+    const timezoneOffset = timezoneOffsetParam ? Number(timezoneOffsetParam) : 0;
     
     if (!date) {
         throw new Error('`date` is required.');
+    }
+
+    const clientNow = new Date(Date.now() - timezoneOffset * 60000);
+    const clientToday = clientNow.toISOString().split('T')[0];
+    if (date < clientToday) {
+        throw new Error('Cannot modify habit for past days.');
     }
 
     await undoHabitCompletion(user.id, id, date);

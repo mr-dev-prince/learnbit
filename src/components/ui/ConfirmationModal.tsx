@@ -94,19 +94,22 @@ export default function ConfirmationModal({
             <button
               onClick={onConfirm}
               disabled={isPending}
-              className={`
-                rounded-lg px-5 py-2 text-sm font-semibold text-white
-                transition-all duration-200 active:scale-[0.98]
-                disabled:pointer-events-none disabled:opacity-50
-                ${
-                  isDestructive
-                    ? 'bg-red-500 hover:bg-red-600'
-                    : 'bg-primary hover:opacity-90 hover:shadow-[0_4px_16px_-4px_rgba(var(--primary-rgb),0.4)]'
-                }
-              `}
-            >
-              {isPending ? 'Processing...' : confirmText}
-            </button>
+                className={`
+                  flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-semibold text-white
+                  transition-all duration-200 active:scale-[0.98]
+                  disabled:pointer-events-none disabled:opacity-50
+                  ${
+                    isDestructive
+                      ? 'bg-red-500 hover:bg-red-600'
+                      : 'bg-primary hover:opacity-90 hover:shadow-[0_4px_16px_-4px_rgba(var(--primary-rgb),0.4)]'
+                  }
+                `}
+              >
+                {isPending && (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                )}
+                {isPending ? 'Processing...' : confirmText}
+              </button>
           </div>
         </div>
       </div>

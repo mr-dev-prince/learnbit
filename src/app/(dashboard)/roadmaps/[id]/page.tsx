@@ -268,12 +268,13 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
               </button>
             </div>
           ) : (
-            <div className="flex flex-col h-fit rounded-lg border border-border gap-3 bg-surface p-4">
+            <div className="flex flex-col h-fit gap-3">
               {modules.map((module, index) => (
                 <ModuleCard
                   key={module.id}
                   module={module}
                   index={index}
+                  isLast={index === modules.length - 1}
                   onEdit={handleOpenModal}
                   onDelete={handleDelete}
                   onStatusChange={handleModuleStatusChange}
