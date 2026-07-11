@@ -106,7 +106,10 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             </div>
 
             <div>
-              <label htmlFor="description" className="mb-1 block text-sm font-medium text-text-muted">
+              <label
+                htmlFor="description"
+                className="mb-1 block text-sm font-medium text-text-muted"
+              >
                 Description (Optional)
               </label>
               <textarea

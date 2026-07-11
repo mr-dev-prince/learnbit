@@ -1,0 +1,22 @@
+model Folder {
+    id        String   @id @default(cuid())
+    userId    String
+    name      String
+    parentId  String?
+    notes     Note[]
+    parent    Folder?  @relation("SubFolders", fields: [parentId], references: [id])
+    children  Folder[] @relation("SubFolders")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Note {
+    id        String   @id @default(cuid())
+    userId    String
+    title     String
+    content   String?
+    folderId  String?
+    folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

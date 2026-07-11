@@ -58,9 +58,7 @@ export default function Hero() {
             style={{ fontFamily: 'var(--font-brand)', color: 'var(--foreground)' }}
           >
             learn
-            <span className="text-6xl leading-none font-black text-orange-600">
-              bit.
-            </span>
+            <span className="text-6xl leading-none font-black text-orange-600">bit.</span>
           </p>
         </Link>
       </div>

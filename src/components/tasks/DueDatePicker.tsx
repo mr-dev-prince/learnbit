@@ -21,7 +21,7 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
     if (!value) {
       onChange(getCurrentDateTime());
     }
-  }, []);
+  }, [onChange, value]);
 
   function setPreset(days: number) {
     const date = new Date();

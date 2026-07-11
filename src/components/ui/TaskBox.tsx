@@ -107,7 +107,7 @@ export default function TaskBox({ filter }: { filter: TaskFilterPeriod }) {
   }
 
   const filteredTasks = filterTasksByPeriod(tasks, filter).filter(
-    (task) => task.status === 'TODO' || task.status === 'IN_PROGRESS'
+    (task) => task.status === 'TODO' || task.status === 'IN_PROGRESS',
   );
 
   if (filteredTasks.length === 0) {

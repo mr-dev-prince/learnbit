@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Learnbit – Personal Task Manager, Habit Tracker & Productivity App",
+  title: 'Learnbit – Personal Task Manager, Habit Tracker & Productivity App',
   description:
-    "Organize tasks, build lasting habits, track your progress, and stay productive with Learnbit. A clean, distraction-free personal productivity app designed to help you achieve your goals.",
+    'Organize tasks, build lasting habits, track your progress, and stay productive with Learnbit. A clean, distraction-free personal productivity app designed to help you achieve your goals.',
 };
 
 export default function RootLayout({

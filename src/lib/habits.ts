@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { prisma } from '@/lib/database';
-import type { Habit, HabitLog, HabitPayload } from '@/types/Habit';
+import type { Habit, HabitPayload } from '@/types/Habit';
 
 const normalizeText = (value: unknown) => {
   if (typeof value !== 'string') {

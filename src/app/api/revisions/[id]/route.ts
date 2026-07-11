@@ -19,7 +19,7 @@ export const PATCH = (request: NextRequest, context: RouteContext) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();
     const { id } = await context.params;
-    const body = await request.json().catch(() => ({})) as Record<string, unknown>;
+    const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
 
     const payload: UpdateRevisionPayload = {};
 
@@ -32,9 +32,7 @@ export const PATCH = (request: NextRequest, context: RouteContext) =>
 
     if (body.notes !== undefined) {
       payload.notes =
-        typeof body.notes === 'string' && body.notes.trim().length > 0
-          ? body.notes.trim()
-          : null;
+        typeof body.notes === 'string' && body.notes.trim().length > 0 ? body.notes.trim() : null;
     }
 
     if (body.intervalDays !== undefined) {

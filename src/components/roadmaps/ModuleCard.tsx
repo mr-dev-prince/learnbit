@@ -1,6 +1,14 @@
-import { MoreVertical, CheckCircle, Clock3, CircleDashed, Edit, Trash, XCircle, Check } from 'lucide-react';
+import {
+  MoreVertical,
+  CheckCircle,
+  Clock3,
+  CircleDashed,
+  Edit,
+  Trash,
+  XCircle,
+  Check,
+} from 'lucide-react';
 import type { RoadmapModule } from '@/types/Roadmap';
-import { useState } from 'react';
 
 interface ModuleCardProps {
   module: RoadmapModule;
@@ -11,8 +19,14 @@ interface ModuleCardProps {
   isLast?: boolean;
 }
 
-export default function ModuleCard({ module, onEdit, onDelete, onStatusChange, index, isLast = false }: ModuleCardProps) {
-
+export default function ModuleCard({
+  module,
+  onEdit,
+  onDelete,
+  onStatusChange,
+  index,
+  isLast = false,
+}: ModuleCardProps) {
   const STATUS_COLORS: Record<string, string> = {
     PLANNED: 'bg-surface-muted text-text-muted',
     IN_PROGRESS: 'bg-[var(--progress-bg)] text-[var(--progress-text)]',
@@ -33,20 +47,20 @@ export default function ModuleCard({ module, onEdit, onDelete, onStatusChange, i
     <div className="group relative flex w-full items-stretch transition-all duration-200">
       {/* Timeline Column */}
       <div className="relative flex w-16 shrink-0 flex-col items-center pt-4">
-        <div 
+        <div
           className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 font-bold text-xs bg-background ${
-            isCompleted 
-              ? 'border-[var(--completed-text)] text-[var(--completed-text)]' 
+            isCompleted
+              ? 'border-(--completed-text) text-(--completed-text)'
               : 'border-border text-text-muted'
           }`}
         >
           {isCompleted ? <Check size={16} strokeWidth={3} /> : index + 1}
         </div>
         {!isLast && (
-          <div 
+          <div
             className={`absolute top-12 -bottom-7 w-[2px] z-0 ${
-              isCompleted ? 'bg-[var(--completed-text)]' : 'bg-border'
-            }`} 
+              isCompleted ? 'bg-(--completed-text)' : 'bg-border'
+            }`}
           />
         )}
       </div>
@@ -55,7 +69,7 @@ export default function ModuleCard({ module, onEdit, onDelete, onStatusChange, i
       <div className="flex min-w-0 flex-1 flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-lg border border-border bg-surface hover:border-border-strong hover:shadow-sm">
         <div className="min-w-0 pr-4 pb-2 sm:pb-0 pointer-events-none">
           <h3 className="truncate text-lg font-semibold text-foreground">{module.title}</h3>
-          
+
           {module.description && (
             <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-muted">
               {module.description}

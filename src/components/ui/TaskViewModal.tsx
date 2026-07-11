@@ -90,7 +90,6 @@ export default function TaskViewModal({
   task,
   isOpen,
   onClose,
-  onEdit,
   onDelete,
   onMarkRevision,
 }: TaskViewModalProps) {

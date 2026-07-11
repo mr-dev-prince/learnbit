@@ -99,7 +99,8 @@ function ProgressOverviewCard({ filter }: { filter: TaskFilterPeriod }) {
   const goalPct = total > 0 ? Math.round((completed / total) * 100) : 0;
   const activity = weeklyCompletionsFromTasks(tasks);
 
-  const goalLabel = filter === 'Daily' ? 'Daily Goal' : filter === 'Weekly' ? 'Weekly Goal' : 'Monthly Goal';
+  const goalLabel =
+    filter === 'Daily' ? 'Daily Goal' : filter === 'Weekly' ? 'Weekly Goal' : 'Monthly Goal';
 
   return (
     <div className="rounded-lg border border-border bg-surface p-5">

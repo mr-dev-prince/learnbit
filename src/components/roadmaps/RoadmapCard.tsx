@@ -10,7 +10,6 @@ import {
   Edit,
 } from 'lucide-react';
 import type { Roadmap } from '@/types/Roadmap';
-import { useState } from 'react';
 
 interface RoadmapCardProps {
   roadmap: Roadmap;

@@ -49,9 +49,7 @@ export function useUpdateRevision() {
       } else {
         // Update in place (e.g. notes / interval edit)
         queryClient.setQueryData<PendingRevisionWithTask[]>(revisionQueueKey, (old = []) =>
-          old.map((r) =>
-            r.id === updated.id ? { ...r, ...updated } : r,
-          ),
+          old.map((r) => (r.id === updated.id ? { ...r, ...updated } : r)),
         );
       }
     },

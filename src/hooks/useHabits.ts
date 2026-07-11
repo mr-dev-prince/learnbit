@@ -42,14 +42,30 @@ export function useHabits() {
   });
 
   const logCompletionMutation = useMutation({
-    mutationFn: ({ id, date, timezoneOffset }: { id: string; date: string; timezoneOffset: number }) => logHabitCompletion(id, date, timezoneOffset),
+    mutationFn: ({
+      id,
+      date,
+      timezoneOffset,
+    }: {
+      id: string;
+      date: string;
+      timezoneOffset: number;
+    }) => logHabitCompletion(id, date, timezoneOffset),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: HABITS_QUERY_KEY });
     },
   });
 
   const undoCompletionMutation = useMutation({
-    mutationFn: ({ id, date, timezoneOffset }: { id: string; date: string; timezoneOffset: number }) => undoHabitCompletion(id, date, timezoneOffset),
+    mutationFn: ({
+      id,
+      date,
+      timezoneOffset,
+    }: {
+      id: string;
+      date: string;
+      timezoneOffset: number;
+    }) => undoHabitCompletion(id, date, timezoneOffset),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: HABITS_QUERY_KEY });
     },

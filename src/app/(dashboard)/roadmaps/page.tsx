@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import RoadmapCard from '@/components/roadmaps/RoadmapCard';
 import RoadmapFormModal from '@/components/roadmaps/RoadmapFormModal';
-import { useRoadmaps, useCreateRoadmap, useUpdateRoadmap, useDeleteRoadmap } from '@/hooks/useRoadmaps';
+import {
+  useRoadmaps,
+  useCreateRoadmap,
+  useUpdateRoadmap,
+  useDeleteRoadmap,
+} from '@/hooks/useRoadmaps';
 import type { Roadmap, RoadmapPayload } from '@/types/Roadmap';
 
 export default function RoadmapsPage() {
@@ -35,7 +40,11 @@ export default function RoadmapsPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this roadmap? All its modules will be permanently removed.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete this roadmap? All its modules will be permanently removed.',
+      )
+    ) {
       deleteRoadmap.mutate(id);
     }
   };
@@ -57,11 +66,14 @@ export default function RoadmapsPage() {
           New Roadmap
         </button>
       </div>
-      
+
       {isLoading ? (
         <div className="flex flex-col gap-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="animate-pulse rounded-lg border border-border bg-surface px-4 py-4">
+            <div
+              key={i}
+              className="animate-pulse rounded-lg border border-border bg-surface px-4 py-4"
+            >
               <div className="flex items-center gap-4">
                 <div className="h-10 w-10 shrink-0 rounded-lg bg-border" />
                 <div className="flex-1 space-y-2.5">

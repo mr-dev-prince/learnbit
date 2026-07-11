@@ -27,5 +27,7 @@ export function logHabitCompletion(id: string, date: string, timezoneOffset: num
 }
 
 export function undoHabitCompletion(id: string, date: string, timezoneOffset: number) {
-  return api.delete(`/api/habits/${id}/log?date=${encodeURIComponent(date)}&timezoneOffset=${timezoneOffset}`);
+  return api.delete(
+    `/api/habits/${id}/log?date=${encodeURIComponent(date)}&timezoneOffset=${timezoneOffset}`,
+  );
 }

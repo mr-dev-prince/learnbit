@@ -55,7 +55,8 @@ export function useUpdateRoadmap() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: RoadmapPayload }) => updateRoadmap(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: RoadmapPayload }) =>
+      updateRoadmap(id, payload),
     onSuccess: (roadmap) => {
       queryClient.setQueryData(roadmapKeys.detail(roadmap.id), roadmap);
       queryClient.setQueryData<Roadmap[]>(roadmapKeys.all, (old = []) =>
@@ -95,10 +96,14 @@ export function useCreateModule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ roadmapId, payload }: { roadmapId: string; payload: ModulePayload }) => createModule(roadmapId, payload),
+    mutationFn: ({ roadmapId, payload }: { roadmapId: string; payload: ModulePayload }) =>
+      createModule(roadmapId, payload),
     onSuccess: (module, { roadmapId }) => {
-      queryClient.setQueryData<RoadmapModule[]>(roadmapKeys.modules(roadmapId), (old = []) => [...old, module]);
-      
+      queryClient.setQueryData<RoadmapModule[]>(roadmapKeys.modules(roadmapId), (old = []) => [
+        ...old,
+        module,
+      ]);
+
       // Update roadmap detail to include module (if we store them together)
       queryClient.setQueryData<Roadmap | undefined>(roadmapKeys.detail(roadmapId), (old) => {
         if (!old) return old;
@@ -112,7 +117,15 @@ export function useUpdateModule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ roadmapId, moduleId, payload }: { roadmapId: string; moduleId: string; payload: ModulePayload }) => updateModule(roadmapId, moduleId, payload),
+    mutationFn: ({
+      roadmapId,
+      moduleId,
+      payload,
+    }: {
+      roadmapId: string;
+      moduleId: string;
+      payload: ModulePayload;
+    }) => updateModule(roadmapId, moduleId, payload),
     onSuccess: (module, { roadmapId }) => {
       queryClient.setQueryData<RoadmapModule[]>(roadmapKeys.modules(roadmapId), (old = []) =>
         old.map((m) => (m.id === module.id ? module : m)),
@@ -134,7 +147,8 @@ export function useDeleteModule() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ roadmapId, moduleId }: { roadmapId: string; moduleId: string }) => deleteModule(roadmapId, moduleId),
+    mutationFn: ({ roadmapId, moduleId }: { roadmapId: string; moduleId: string }) =>
+      deleteModule(roadmapId, moduleId),
     onSuccess: (_, { roadmapId, moduleId }) => {
       queryClient.setQueryData<RoadmapModule[]>(roadmapKeys.modules(roadmapId), (old = []) =>
         old.filter((m) => m.id !== moduleId),

@@ -1,6 +1,6 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { X, AlertTriangle, Info } from 'lucide-react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface ConfirmationModalProps {
   description: string;
   confirmText?: string;
   cancelText?: string;
+  pendingText?: string;
   isDestructive?: boolean;
   isPending?: boolean;
 }
@@ -22,6 +23,7 @@ export default function ConfirmationModal({
   description,
   confirmText = 'Confirm',
   cancelText = 'Cancel',
+  pendingText,
   isDestructive = true,
   isPending = false,
 }: ConfirmationModalProps) {
@@ -55,21 +57,32 @@ export default function ConfirmationModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-32"
+          className="pointer-events-none absolute inset-x-0 top-0 h-32 opacity-50"
           style={{
             background: isDestructive
               ? 'linear-gradient(180deg, color-mix(in srgb, var(--destructive, #ef4444) 15%, transparent), transparent)'
               : 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)',
           }}
         />
-        <div className="relative flex shrink-0 items-start justify-between border-b border-border bg-surface px-6 py-5">
-          <h2 className="text-xl" style={{ fontFamily: 'var(--font-brand)' }}>
-            {title}
-          </h2>
+        <div className="relative flex shrink-0 items-start justify-between border-b border-border bg-surface/50 backdrop-blur-sm px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isDestructive ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'}`}
+            >
+              {isDestructive ? <AlertTriangle size={20} /> : <Info size={20} />}
+            </div>
+            <h2
+              className="text-xl font-semibold text-foreground"
+              style={{ fontFamily: 'var(--font-brand)' }}
+            >
+              {title}
+            </h2>
+          </div>
           <button
             onClick={onClose}
+            disabled={isPending}
             aria-label="Close"
-            className="rounded-lg border border-border p-2 transition-all duration-200 hover:bg-surface-hover hover:rotate-90"
+            className="rounded-lg border border-border bg-surface p-2 text-foreground/70 transition-all duration-200 hover:bg-surface-hover hover:text-foreground hover:rotate-90 disabled:pointer-events-none disabled:opacity-50"
           >
             <X size={16} />
           </button>
@@ -94,7 +107,7 @@ export default function ConfirmationModal({
             <button
               onClick={onConfirm}
               disabled={isPending}
-                className={`
+              className={`
                   flex items-center gap-2 rounded-lg px-5 py-2 text-sm font-semibold text-white
                   transition-all duration-200 active:scale-[0.98]
                   disabled:pointer-events-none disabled:opacity-50
@@ -104,12 +117,12 @@ export default function ConfirmationModal({
                       : 'bg-primary hover:opacity-90 hover:shadow-[0_4px_16px_-4px_rgba(var(--primary-rgb),0.4)]'
                   }
                 `}
-              >
-                {isPending && (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                )}
-                {isPending ? 'Processing...' : confirmText}
-              </button>
+            >
+              {isPending && (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+              )}
+              {isPending ? pendingText || 'Processing...' : confirmText}
+            </button>
           </div>
         </div>
       </div>

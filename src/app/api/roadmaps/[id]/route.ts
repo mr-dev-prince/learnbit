@@ -32,4 +32,3 @@ export const DELETE = async (_: NextRequest, { params }: { params: Promise<{ id:
     if (!success) return new ApiResponse(null, 'Roadmap not found', 404);
     return new ApiResponse(null, 'Roadmap deleted successfully');
   });
-

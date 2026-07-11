@@ -30,7 +30,11 @@ function HabitDetailsModal({
       className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md"
       onClick={(e) => e.stopPropagation()}
     >
-      <button aria-label="Close modal" onClick={onClose} className="absolute inset-0 cursor-default" />
+      <button
+        aria-label="Close modal"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default"
+      />
       <div
         className="animate-in fade-in-0 zoom-in-[0.97] slide-in-from-bottom-3 relative flex w-full max-w-md flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl duration-300"
         onClick={(e) => e.stopPropagation()}
@@ -38,7 +42,8 @@ function HabitDetailsModal({
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-32"
           style={{
-            background: 'linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)'
+            background:
+              'linear-gradient(180deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)',
           }}
         />
         <div className="relative flex shrink-0 items-start justify-between border-b border-border bg-surface px-6 py-5">
@@ -108,13 +113,13 @@ function calcStreak(habit: Habit, dateWindow: string[]): number {
   return streak;
 }
 
-const WINDOW = 14; 
+const WINDOW = 14;
 
 interface HeatmapRowProps {
   habit: Habit;
   dateWindow: string[];
   todayStr: string;
-  actingDate: string | null; 
+  actingDate: string | null;
   onToggle: (habitId: string, dateStr: string, currentlyDone: boolean) => void;
   onDelete: (habitId: string) => void;
   onViewDetails: (habit: Habit) => void;
@@ -211,7 +216,15 @@ function HeatmapRow({
             <button
               disabled={acting || isPast}
               onClick={() => onToggle(habit.id, dateStr, isDone)}
-              title={isPast ? (isDone ? `Completed on ${dateStr}` : `Missed on ${dateStr}`) : (isDone ? `Undo: ${dateStr}` : `Mark done: ${dateStr}`)}
+              title={
+                isPast
+                  ? isDone
+                    ? `Completed on ${dateStr}`
+                    : `Missed on ${dateStr}`
+                  : isDone
+                    ? `Undo: ${dateStr}`
+                    : `Mark done: ${dateStr}`
+              }
               className={`
                 mx-auto flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold
                 transition-all duration-200
@@ -220,8 +233,10 @@ function HeatmapRow({
                 ${isToday ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}
                 ${
                   isDone
-                    ? 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400' + (!isPast ? ' hover:bg-green-500/30' : '')
-                    : 'bg-red-500/15 text-red-500 dark:bg-red-500/20 dark:text-red-400' + (!isPast ? ' hover:bg-red-500/25' : '')
+                    ? 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400' +
+                      (!isPast ? ' hover:bg-green-500/30' : '')
+                    : 'bg-red-500/15 text-red-500 dark:bg-red-500/20 dark:text-red-400' +
+                      (!isPast ? ' hover:bg-red-500/25' : '')
                 }
               `}
             >

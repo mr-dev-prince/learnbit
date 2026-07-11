@@ -1,7 +1,14 @@
 import 'server-only';
 
 import { prisma } from '@/lib/database';
-import type { Roadmap, RoadmapModule, RoadmapPayload, ModulePayload, RoadmapStatus, ModuleStatus } from '@/types/Roadmap';
+import type {
+  Roadmap,
+  RoadmapModule,
+  RoadmapPayload,
+  ModulePayload,
+  RoadmapStatus,
+  ModuleStatus,
+} from '@/types/Roadmap';
 
 const VALID_ROADMAP_STATUSES: RoadmapStatus[] = ['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ARCHIVED'];
 const VALID_MODULE_STATUSES: ModuleStatus[] = ['PLANNED', 'IN_PROGRESS', 'COMPLETED', 'SKIPPED'];
@@ -20,6 +27,7 @@ const normalizeResources = (value: unknown) => {
     .filter((entry) => entry.length > 0);
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapRoadmapModule = (module: any): RoadmapModule => ({
   id: module.id,
   roadmapId: module.roadmapId,
@@ -31,6 +39,7 @@ const mapRoadmapModule = (module: any): RoadmapModule => ({
   updatedAt: module.updatedAt.toISOString(),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapRoadmap = (roadmap: any): Roadmap => ({
   id: roadmap.id,
   userId: roadmap.userId,
@@ -57,7 +66,10 @@ export const parseRoadmapPayload = (payload: unknown): Required<RoadmapPayload> 
   }
 
   let status: RoadmapStatus = 'IN_PROGRESS';
-  if (typeof rawPayload.status === 'string' && VALID_ROADMAP_STATUSES.includes(rawPayload.status as RoadmapStatus)) {
+  if (
+    typeof rawPayload.status === 'string' &&
+    VALID_ROADMAP_STATUSES.includes(rawPayload.status as RoadmapStatus)
+  ) {
     status = rawPayload.status as RoadmapStatus;
   }
 
@@ -83,7 +95,10 @@ export const parseModulePayload = (payload: unknown): Required<ModulePayload> =>
   }
 
   let status: ModuleStatus = 'PLANNED';
-  if (typeof rawPayload.status === 'string' && VALID_MODULE_STATUSES.includes(rawPayload.status as ModuleStatus)) {
+  if (
+    typeof rawPayload.status === 'string' &&
+    VALID_MODULE_STATUSES.includes(rawPayload.status as ModuleStatus)
+  ) {
     status = rawPayload.status as ModuleStatus;
   }
 
@@ -137,7 +152,11 @@ export const createRoadmap = async (userId: string, payload: Required<RoadmapPay
   return mapRoadmap(roadmap);
 };
 
-export const updateRoadmap = async (userId: string, roadmapId: string, payload: Required<RoadmapPayload>) => {
+export const updateRoadmap = async (
+  userId: string,
+  roadmapId: string,
+  payload: Required<RoadmapPayload>,
+) => {
   const existing = await prisma.roadmap.findFirst({ where: { id: roadmapId, userId } });
   if (!existing) return null;
 
@@ -169,7 +188,7 @@ export const deleteRoadmap = async (userId: string, roadmapId: string) => {
 export const listModules = async (userId: string, roadmapId: string) => {
   // First ensure the roadmap belongs to the user
   const roadmap = await prisma.roadmap.findFirst({ where: { id: roadmapId, userId } });
-  if (!roadmap) throw new Error("Roadmap not found");
+  if (!roadmap) throw new Error('Roadmap not found');
 
   const modules = await prisma.roadmapModule.findMany({
     where: { roadmapId },
@@ -178,9 +197,13 @@ export const listModules = async (userId: string, roadmapId: string) => {
   return modules.map(mapRoadmapModule);
 };
 
-export const createModule = async (userId: string, roadmapId: string, payload: Required<ModulePayload>) => {
+export const createModule = async (
+  userId: string,
+  roadmapId: string,
+  payload: Required<ModulePayload>,
+) => {
   const roadmap = await prisma.roadmap.findFirst({ where: { id: roadmapId, userId } });
-  if (!roadmap) throw new Error("Roadmap not found");
+  if (!roadmap) throw new Error('Roadmap not found');
 
   // Get current max order
   const maxOrderModule = await prisma.roadmapModule.findFirst({
@@ -201,11 +224,18 @@ export const createModule = async (userId: string, roadmapId: string, payload: R
   return mapRoadmapModule(newModule);
 };
 
-export const updateModule = async (userId: string, roadmapId: string, moduleId: string, payload: Required<ModulePayload>) => {
+export const updateModule = async (
+  userId: string,
+  roadmapId: string,
+  moduleId: string,
+  payload: Required<ModulePayload>,
+) => {
   const roadmap = await prisma.roadmap.findFirst({ where: { id: roadmapId, userId } });
-  if (!roadmap) throw new Error("Roadmap not found");
+  if (!roadmap) throw new Error('Roadmap not found');
 
-  const existingModule = await prisma.roadmapModule.findFirst({ where: { id: moduleId, roadmapId } });
+  const existingModule = await prisma.roadmapModule.findFirst({
+    where: { id: moduleId, roadmapId },
+  });
   if (!existingModule) return null;
 
   const updatedModule = await prisma.roadmapModule.update({

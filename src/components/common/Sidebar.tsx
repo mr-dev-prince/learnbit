@@ -3,7 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Lightbulb, CheckCircle, Settings, Plus, CalendarDays, Map } from 'lucide-react';
+import {
+  LayoutDashboard,
+  BookOpen,
+  CheckCircle,
+  Settings,
+  Plus,
+  CalendarDays,
+  Map,
+  PencilLine,
+} from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
 import QuickAddModal from '../tasks/QuickAddModal';
@@ -27,35 +36,35 @@ const Sidebar: React.FC = () => {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: <LayoutDashboard size={24} />,
+      icon: <LayoutDashboard size={20} />,
       href: '/dashboard',
     },
     {
       id: 'revision',
       label: 'Revision Queue',
-      icon: <BookOpen size={24} />,
+      icon: <BookOpen size={20} />,
       href: '/revision-queue',
     },
     {
       id: 'habit-tracker',
       label: 'Habit Tracker',
-      icon: <CalendarDays size={24} />,
+      icon: <CalendarDays size={20} />,
       href: '/habits',
     },
     {
-      id: 'suggestions',
-      label: 'Suggestions',
-      icon: <Lightbulb size={24} />,
-      href: '/suggestions',
+      id: 'notes',
+      label: 'Notes',
+      icon: <PencilLine size={20} />,
+      href: '/notes',
     },
     {
       id: 'roadmaps',
       label: 'Roadmaps',
-      icon: <Map size={24} />,
+      icon: <Map size={20} />,
       href: '/roadmaps',
     },
-    { id: 'completed', label: 'Completed', icon: <CheckCircle size={24} />, href: '/completed' },
-    { id: 'settings', label: 'Settings', icon: <Settings size={24} />, href: '/settings' },
+    { id: 'completed', label: 'Completed', icon: <CheckCircle size={20} />, href: '/completed' },
+    { id: 'settings', label: 'Settings', icon: <Settings size={20} />, href: '/settings' },
   ];
 
   return (

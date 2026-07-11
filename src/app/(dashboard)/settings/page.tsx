@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { Settings } from 'lucide-react';
 import ProfileSettings from '@/components/settings/ProfileSettings';
 import { createClient } from '@/utils/supabase/server';
 

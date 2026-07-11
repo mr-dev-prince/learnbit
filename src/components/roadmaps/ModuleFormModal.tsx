@@ -9,7 +9,12 @@ interface ModuleFormModalProps {
   initialData?: RoadmapModule | null;
 }
 
-export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData }: ModuleFormModalProps) {
+export default function ModuleFormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  initialData,
+}: ModuleFormModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ModuleStatus>('PLANNED');
@@ -18,12 +23,17 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
   useEffect(() => {
     if (isOpen) {
       if (initialData) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTitle(initialData.title);
+
         setDescription(initialData.description || '');
+
         setStatus(initialData.status);
       } else {
         setTitle('');
+
         setDescription('');
+
         setStatus('PLANNED');
       }
     }
@@ -52,7 +62,11 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
       {/* Backdrop */}
-      <button aria-label="Close modal" onClick={onClose} className="absolute inset-0 w-full h-full cursor-default" />
+      <button
+        aria-label="Close modal"
+        onClick={onClose}
+        className="absolute inset-0 w-full h-full cursor-default"
+      />
 
       {/* Modal */}
       <div className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
@@ -108,7 +122,9 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-foreground">Description</label>
+              <label className="mb-1.5 block text-sm font-semibold text-foreground">
+                Description
+              </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -150,7 +166,13 @@ export default function ModuleFormModal({ isOpen, onClose, onSubmit, initialData
                 {isSubmitting && (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
                 )}
-                {isSubmitting ? (initialData ? 'Saving...' : 'Creating...') : (initialData ? 'Save Changes' : 'Create Module')}
+                {isSubmitting
+                  ? initialData
+                    ? 'Saving...'
+                    : 'Creating...'
+                  : initialData
+                    ? 'Save Changes'
+                    : 'Create Module'}
               </button>
             </div>
           </form>
