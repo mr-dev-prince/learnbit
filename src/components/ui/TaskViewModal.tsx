@@ -20,6 +20,7 @@ import type { Task } from '@/types/Task';
 import { useDeleteTask, useUpdateTask } from '@/hooks/useTasks';
 import { formatDateTime } from '@/utils/common/dateUtils';
 import ConfirmationModal from './ConfirmationModal';
+import DueDatePicker from '../tasks/DueDatePicker';
 
 interface TaskViewModalProps {
   task: Task | null;
@@ -96,6 +97,7 @@ export default function TaskViewModal({
   const [isEditing, setIsEditing] = useState(false);
   const [editNotes, setEditNotes] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [editDueDate, setEditDueDate] = useState('');
   const [isHoveringClose, setIsHoveringClose] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -111,6 +113,7 @@ export default function TaskViewModal({
   const handleStartEdit = () => {
     setEditDescription(task.description || '');
     setEditNotes(task.notes || '');
+    setEditDueDate(task.dueDate || '');
     setIsEditing(true);
   };
 
@@ -123,7 +126,7 @@ export default function TaskViewModal({
           description: editDescription.trim() || null,
           notes: editNotes.trim() || null,
           resourceLinks: task.resourceLinks,
-          dueDate: task.dueDate,
+          dueDate: editDueDate || null,
           status: task.status,
         },
       },
@@ -247,15 +250,20 @@ export default function TaskViewModal({
                 <span>Last updated {timeAgo}</span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
-              <Calendar size={13} strokeWidth={2} className="opacity-50" />
-              <p>{formatDateTime(task.dueDate || '')}</p>
-            </div>
+            {!isEditing && (
+              <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
+                <Calendar size={13} strokeWidth={2} className="opacity-50" />
+                <p>{formatDateTime(task.dueDate || '')}</p>
+              </div>
+            )}
           </div>
         </div>
         <div className="mx-6 h-px bg-border sm:mx-8" />
         <div className="px-6 py-5 sm:px-8 sm:py-6 h-96 overflow-y-auto">
           <div className="space-y-6">
+            {isEditing && (
+              <DueDatePicker value={editDueDate} onChange={setEditDueDate} />
+            )}
             <div>
               <div className="mb-3 flex items-center gap-2">
                 <FileText size={15} strokeWidth={2} className="text-text-muted" />

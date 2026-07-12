@@ -90,7 +90,7 @@ export default function TaskForm({ onSuccess }: TaskFormProps) {
 
   return (
     <form id="task-form" onSubmit={handleSubmit} className="space-y-4 px-4 py-4">
-      <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+      <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
         <div className="space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium">Title</label>

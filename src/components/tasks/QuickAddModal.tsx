@@ -18,7 +18,7 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
 
       {/* Modal */}
-      <div className="relative flex h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
+      <div className="relative flex h-[80vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
         {/* Gradient Accent */}
         <div
           className="pointer-events-none absolute inset-x-0 top-0 h-32"
