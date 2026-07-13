@@ -176,7 +176,7 @@ export default function NotesPage() {
             <div className="flex-1 overflow-hidden p-6">
               <LexicalEditor
                 initialContent={activeNote.content}
-                noteId={activeNote.id}
+                contentId={activeNote.id}
                 onChange={handleContentChange}
               />
             </div>

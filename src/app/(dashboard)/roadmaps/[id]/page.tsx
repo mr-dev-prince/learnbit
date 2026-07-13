@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Clock, CircleDashed, CheckCircle, Clock3 } from 'lucide-react';
 import ModuleCard from '@/components/roadmaps/ModuleCard';
 import ModuleFormModal from '@/components/roadmaps/ModuleFormModal';
+import ModuleViewModal from '@/components/roadmaps/ModuleViewModal';
+import ConfirmationModal from '@/components/ui/ConfirmationModal';
 import {
   useRoadmap,
   useRoadmapModules,
@@ -27,6 +29,12 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<RoadmapModule | null>(null);
 
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewingModule, setViewingModule] = useState<RoadmapModule | null>(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [moduleToDelete, setModuleToDelete] = useState<string | null>(null);
+
   const handleOpenModal = (module?: RoadmapModule) => {
     setEditingModule(module || null);
     setIsModalOpen(true);
@@ -35,6 +43,16 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
   const handleCloseModal = () => {
     setEditingModule(null);
     setIsModalOpen(false);
+  };
+
+  const handleOpenViewModal = (module: RoadmapModule) => {
+    setViewingModule(module);
+    setIsViewModalOpen(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setViewingModule(null);
+    setIsViewModalOpen(false);
   };
 
   const handleSubmit = (payload: ModulePayload) => {
@@ -46,8 +64,15 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
   };
 
   const handleDelete = (moduleId: string) => {
-    if (confirm('Are you sure you want to delete this module?')) {
-      deleteModule.mutate({ roadmapId: resolvedParams.id, moduleId });
+    setModuleToDelete(moduleId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (moduleToDelete) {
+      deleteModule.mutate({ roadmapId: resolvedParams.id, moduleId: moduleToDelete });
+      setIsDeleteModalOpen(false);
+      setModuleToDelete(null);
     }
   };
 
@@ -275,6 +300,7 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
                   module={module}
                   index={index}
                   isLast={index === modules.length - 1}
+                  onClick={handleOpenViewModal}
                   onEdit={handleOpenModal}
                   onDelete={handleDelete}
                   onStatusChange={handleModuleStatusChange}
@@ -289,6 +315,24 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
         onClose={handleCloseModal}
         onSubmit={handleSubmit}
         initialData={editingModule}
+      />
+      <ModuleViewModal
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        module={viewingModule}
+      />
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setModuleToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Delete Module"
+        description="Are you sure you want to delete this module? This action cannot be undone."
+        confirmText="Delete"
+        isDestructive={true}
+        isPending={deleteModule.isPending}
       />
     </div>
   );

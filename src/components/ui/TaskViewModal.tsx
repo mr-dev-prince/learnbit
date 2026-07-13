@@ -261,9 +261,7 @@ export default function TaskViewModal({
         <div className="mx-6 h-px bg-border sm:mx-8" />
         <div className="px-6 py-5 sm:px-8 sm:py-6 h-96 overflow-y-auto">
           <div className="space-y-6">
-            {isEditing && (
-              <DueDatePicker value={editDueDate} onChange={setEditDueDate} />
-            )}
+            {isEditing && <DueDatePicker value={editDueDate} onChange={setEditDueDate} />}
             <div>
               <div className="mb-3 flex items-center gap-2">
                 <FileText size={15} strokeWidth={2} className="text-text-muted" />

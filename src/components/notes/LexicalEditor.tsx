@@ -15,12 +15,13 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { TRANSFORMERS } from '@lexical/markdown';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getRoot, $createParagraphNode } from 'lexical';
+import { $getRoot, $createParagraphNode, $createTextNode } from 'lexical';
 
 interface LexicalEditorProps {
   initialContent?: string | null;
-  noteId?: string | null;
-  onChange: (content: string) => void;
+  contentId?: string | null;
+  onChange?: (content: string) => void;
+  readOnly?: boolean;
 }
 
 const theme = {
@@ -44,34 +45,42 @@ const theme = {
   quote: 'border-l-4 border-primary pl-4 italic text-foreground/80 mb-4',
 };
 
-function Placeholder() {
+function Placeholder({ readOnly }: { readOnly: boolean }) {
+  if (readOnly) return null;
   return (
     <div className="absolute top-4.5 left-4.5 text-foreground/40 pointer-events-none select-none">
-      Start typing your note...
+      Start typing...
     </div>
   );
 }
 
-// Update the editor content when initialContent changes from outside (e.g., selecting a new note)
+// Update the editor content when initialContent changes from outside (e.g., selecting a new item)
 function UpdateStatePlugin({
-  noteId,
+  contentId,
   initialContent,
 }: {
-  noteId?: string | null;
+  contentId?: string | null;
   initialContent?: string | null;
 }) {
   const [editor] = useLexicalComposerContext();
-  const prevNoteId = useRef<string | null | undefined>(undefined);
+  const prevContentId = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
-    // Only parse and set initial content when switching to a DIFFERENT note
-    if (prevNoteId.current !== noteId) {
+    // Only parse and set initial content when switching to a DIFFERENT item
+    if (prevContentId.current !== contentId) {
       if (initialContent) {
         try {
           const editorState = editor.parseEditorState(initialContent);
           editor.setEditorState(editorState);
         } catch (e) {
-          console.error('Failed to parse initial content', e);
+          console.warn('Failed to parse initial content, treating as plain text', e);
+          editor.update(() => {
+            const root = $getRoot();
+            root.clear();
+            const paragraph = $createParagraphNode();
+            paragraph.append($createTextNode(initialContent));
+            root.append(paragraph);
+          });
         }
       } else {
         editor.update(() => {
@@ -82,17 +91,23 @@ function UpdateStatePlugin({
           }
         });
       }
-      prevNoteId.current = noteId;
+      prevContentId.current = contentId;
     }
-  }, [editor, noteId, initialContent]);
+  }, [editor, contentId, initialContent]);
 
   return null;
 }
 
-export default function LexicalEditor({ initialContent, noteId, onChange }: LexicalEditorProps) {
+export default function LexicalEditor({
+  initialContent,
+  contentId,
+  onChange,
+  readOnly = false,
+}: LexicalEditorProps) {
   const initialConfig = {
     namespace: 'LearnbitNotesEditor',
     theme,
+    editable: !readOnly,
     onError(error: Error) {
       console.error(error);
     },
@@ -109,26 +124,32 @@ export default function LexicalEditor({ initialContent, noteId, onChange }: Lexi
   };
 
   return (
-    <div className="relative h-full flex flex-col bg-transparent rounded-lg border border-border shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+    <div
+      className={`relative flex flex-col bg-transparent ${readOnly ? '' : 'h-full rounded-lg border border-border shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all'}`}
+    >
       <LexicalComposer initialConfig={initialConfig}>
-        <div className="relative flex-1 overflow-y-auto">
+        <div className={`relative flex-1 ${readOnly ? '' : 'overflow-y-auto'}`}>
           <RichTextPlugin
             contentEditable={
-              <ContentEditable className="h-full min-h-[300px] w-full resize-none outline-none p-4 text-foreground text-base leading-normal" />
+              <ContentEditable
+                className={`w-full resize-none outline-none text-foreground text-base leading-normal ${readOnly ? '' : 'h-full min-h-[250px] p-4'}`}
+              />
             }
-            placeholder={<Placeholder />}
+            placeholder={<Placeholder readOnly={readOnly} />}
             ErrorBoundary={LexicalErrorBoundary}
           />
-          <HistoryPlugin />
-          <ListPlugin />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-          <OnChangePlugin
-            onChange={(editorState) => {
-              const jsonString = JSON.stringify(editorState.toJSON());
-              onChange(jsonString);
-            }}
-          />
-          <UpdateStatePlugin noteId={noteId} initialContent={initialContent} />
+          {!readOnly && <HistoryPlugin />}
+          {!readOnly && <ListPlugin />}
+          {!readOnly && <MarkdownShortcutPlugin transformers={TRANSFORMERS} />}
+          {!readOnly && onChange && (
+            <OnChangePlugin
+              onChange={(editorState) => {
+                const jsonString = JSON.stringify(editorState.toJSON());
+                onChange(jsonString);
+              }}
+            />
+          )}
+          <UpdateStatePlugin contentId={contentId} initialContent={initialContent} />
         </div>
       </LexicalComposer>
     </div>

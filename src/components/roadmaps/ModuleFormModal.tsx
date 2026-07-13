@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import LexicalEditor from '@/components/notes/LexicalEditor';
 import type { RoadmapModule, ModulePayload, ModuleStatus } from '@/types/Roadmap';
 
 interface ModuleFormModalProps {
@@ -122,17 +123,21 @@ export default function ModuleFormModal({
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-foreground">
-                Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                disabled={isSubmitting}
-                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors disabled:opacity-50"
-                placeholder="What will you learn in this module?"
-              />
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="block text-sm font-semibold text-foreground">Description</label>
+                <span className="text-xs text-text-muted italic">
+                  Add detailed notes using rich text
+                </span>
+              </div>
+              <div
+                className={`h-64 rounded-lg border border-border bg-surface-muted overflow-hidden ${isSubmitting ? 'opacity-50 pointer-events-none' : ''}`}
+              >
+                <LexicalEditor
+                  initialContent={initialData?.description || ''}
+                  contentId={initialData?.id || 'new'}
+                  onChange={setDescription}
+                />
+              </div>
             </div>
 
             <div>

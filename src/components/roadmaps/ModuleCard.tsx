@@ -15,6 +15,7 @@ interface ModuleCardProps {
   onEdit: (module: RoadmapModule) => void;
   onDelete: (moduleId: string) => void;
   onStatusChange?: (moduleId: string, status: string) => void;
+  onClick?: (module: RoadmapModule) => void;
   index: number;
   isLast?: boolean;
 }
@@ -24,6 +25,7 @@ export default function ModuleCard({
   onEdit,
   onDelete,
   onStatusChange,
+  onClick,
   index,
   isLast = false,
 }: ModuleCardProps) {
@@ -43,8 +45,26 @@ export default function ModuleCard({
 
   const isCompleted = module.status === 'COMPLETED';
 
+  const extractPlainText = (content: string) => {
+    try {
+      const state = JSON.parse(content);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const extractText = (node: any): string => {
+        if (node.type === 'text') return node.text;
+        if (node.children) return node.children.map(extractText).join(' ');
+        return '';
+      };
+      return extractText(state.root) || content;
+    } catch {
+      return content;
+    }
+  };
+
   return (
-    <div className="group relative flex w-full items-stretch transition-all duration-200">
+    <div
+      className={`group relative flex w-full items-stretch transition-all duration-200 ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={() => onClick?.(module)}
+    >
       {/* Timeline Column */}
       <div className="relative flex w-16 shrink-0 flex-col items-center pt-4">
         <div
@@ -72,7 +92,7 @@ export default function ModuleCard({
 
           {module.description && (
             <p className="mt-1 line-clamp-2 text-sm leading-6 text-text-muted">
-              {module.description}
+              {extractPlainText(module.description)}
             </p>
           )}
         </div>
@@ -95,6 +115,7 @@ export default function ModuleCard({
             <button
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 onEdit(module);
               }}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-text-muted transition-all duration-200 hover:bg-surface-hover hover:text-foreground"
@@ -105,6 +126,7 @@ export default function ModuleCard({
             <button
               onClick={(e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 onDelete(module.id);
               }}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-text-muted transition-all duration-200 hover:bg-red-500/10 hover:text-red-500"

@@ -12,13 +12,13 @@ const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   // Parse the current value to get initial calendar month, or use today
   const initialDate = value ? new Date(value) : new Date();
   const [currentMonth, setCurrentMonth] = useState(
-    new Date(initialDate.getFullYear(), initialDate.getMonth(), 1)
+    new Date(initialDate.getFullYear(), initialDate.getMonth(), 1),
   );
-  
+
   // Track selected time (HH:mm)
   const [timeValue, setTimeValue] = useState(() => {
     if (value) {
@@ -38,7 +38,9 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setCurrentMonth(new Date(d.getFullYear(), d.getMonth(), 1));
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setTimeValue(`${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`);
+        setTimeValue(
+          `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`,
+        );
       }
     }
   }, [value]);
@@ -77,7 +79,7 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
   const month = currentMonth.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
-  
+
   const days = Array.from({ length: daysInMonth }, (_, index) => index + 1);
   const padding = Array.from({ length: firstDayOfMonth }, () => null);
 
@@ -145,7 +147,9 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
               <ChevronLeft size={16} />
             </button>
             <span className="font-semibold text-sm">
-              {new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentMonth)}
+              {new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(
+                currentMonth,
+              )}
             </span>
             <button
               type="button"
@@ -158,7 +162,10 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
 
           <div className="grid grid-cols-7 gap-1 mb-2">
             {DAYS_OF_WEEK.map((day) => (
-              <div key={day} className="text-center text-[10px] font-bold text-text-muted uppercase tracking-wider py-1">
+              <div
+                key={day}
+                className="text-center text-[10px] font-bold text-text-muted uppercase tracking-wider py-1"
+              >
                 {day}
               </div>
             ))}
@@ -177,9 +184,12 @@ export default function DueDatePicker({ value, onChange }: DueDatePickerProps) {
                   onClick={() => handleDateSelect(day)}
                   className={`
                     flex h-8 w-full items-center justify-center rounded-lg text-sm transition-all duration-200
-                    ${isSelected ? 'bg-primary text-white font-bold shadow-md' : 
-                      isToday ? 'border border-primary/30 text-primary font-semibold hover:bg-primary/10' : 
-                      'hover:bg-surface-hover text-foreground/80'
+                    ${
+                      isSelected
+                        ? 'bg-primary text-white font-bold shadow-md'
+                        : isToday
+                          ? 'border border-primary/30 text-primary font-semibold hover:bg-primary/10'
+                          : 'hover:bg-surface-hover text-foreground/80'
                     }
                   `}
                 >
