@@ -21,7 +21,7 @@ export default function TaskFilter({ selected, setSelected }: TaskFilterProps) {
             type="button"
             onClick={() => setSelected(filter)}
             className={`
-              min-w-[96px]
+              min-w-24
               rounded-lg
               px-4
               py-2
