@@ -103,17 +103,40 @@ function monthLabel(dateStr: string): string {
   return new Date(dateStr + 'T12:00:00').toLocaleString('default', { month: 'short' });
 }
 
-function calcStreak(habit: Habit, dateWindow: string[]): number {
+function calcStreak(habit: Habit): number {
   const logSet = new Set((habit.logs ?? []).map((l) => l.date.split('T')[0]));
+  if (logSet.size === 0) return 0;
+
+  const sortedDates = Array.from(logSet).sort();
   let streak = 0;
-  for (let i = dateWindow.length - 1; i >= 0; i--) {
-    if (logSet.has(dateWindow[i])) streak++;
-    else break;
+  const d = new Date();
+  const todayStr = toLocalDateStr(d);
+
+  while (true) {
+    const dateStr = toLocalDateStr(d);
+    if (logSet.has(dateStr)) {
+      streak++;
+    } else {
+      if (dateStr === todayStr) {
+        // Today not logged yet, doesn't break streak
+      } else {
+        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+        if (habit.skipWeekends && isWeekend) {
+          // Free pass
+        } else {
+          break;
+        }
+      }
+    }
+    d.setDate(d.getDate() - 1);
+    if (dateStr < sortedDates[0]) break;
   }
   return streak;
 }
 
 const WINDOW = 14;
+const CELL_W = 36;   // px — each date column width
+const NAME_W = 220;  // px — habit name column width
 
 interface HeatmapRowProps {
   habit: Habit;
@@ -121,6 +144,7 @@ interface HeatmapRowProps {
   todayStr: string;
   actingDate: string | null;
   onToggle: (habitId: string, dateStr: string, currentlyDone: boolean) => void;
+  onMissedClick: (habitId: string, dateStr: string) => void;
   onDelete: (habitId: string) => void;
   onViewDetails: (habit: Habit) => void;
   isDeleting: boolean;
@@ -132,6 +156,7 @@ function HeatmapRow({
   todayStr,
   actingDate,
   onToggle,
+  onMissedClick,
   onDelete,
   onViewDetails,
   isDeleting,
@@ -141,23 +166,32 @@ function HeatmapRow({
     () => new Set((habit.logs ?? []).map((l) => l.date.split('T')[0])),
     [habit.logs],
   );
-
-  const streak = useMemo(() => calcStreak(habit, dateWindow), [habit, dateWindow]);
+  const streak = useMemo(() => calcStreak(habit), [habit]);
   const createdDay = toLocalDateStr(new Date(habit.createdAt));
 
   return (
     <tr className="group border-b border-border last:border-0">
-      <td className="w-48 min-w-44 max-w-52 py-3 pr-4 align-middle">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
+      {/* ── Name column ── */}
+      <td
+        className="py-3 pr-4 align-middle"
+        style={{ minWidth: `${NAME_W}px` }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-foreground">{habit.title}</p>
-            {streak > 0 && (
-              <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-orange-500/10 px-2 py-0.5 text-[10px] font-semibold text-orange-500">
-                <Flame size={9} />
-                {streak}d streak
-              </span>
-            )}
           </div>
+
+          {streak > 0 ? (
+            <div className="shrink-0 flex items-center bg-linear-to-tr from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-full px-2 py-0.5">
+              <Flame size={10} className="text-orange-500 mr-1" />
+              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400">{streak}</span>
+            </div>
+          ) : (
+            <div className="shrink-0 flex items-center bg-surface-muted/30 border border-border/50 rounded-full px-2 py-0.5">
+              <Flame size={10} className="text-text-muted/50 mr-1" />
+              <span className="text-[10px] font-bold text-text-muted/50">0</span>
+            </div>
+          )}
 
           <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
@@ -180,10 +214,7 @@ function HeatmapRow({
           <ConfirmationModal
             isOpen={showDeleteConfirm}
             onClose={() => setShowDeleteConfirm(false)}
-            onConfirm={() => {
-              onDelete(habit.id);
-              setShowDeleteConfirm(false);
-            }}
+            onConfirm={() => { onDelete(habit.id); setShowDeleteConfirm(false); }}
             title="Delete Habit"
             description="Are you sure you want to delete this habit ? This action cannot be undone."
             confirmText="Delete"
@@ -192,6 +223,7 @@ function HeatmapRow({
         </div>
       </td>
 
+      {/* ── Date marker cells ── */}
       {dateWindow.map((dateStr) => {
         const isFuture = dateStr > todayStr;
         const isBeforeCreation = dateStr < createdDay;
@@ -203,44 +235,50 @@ function HeatmapRow({
 
         if (isBeforeCreation || isFuture) {
           return (
-            <td key={dateStr} className="px-0.5 py-3 text-center align-middle">
+            <td key={dateStr} className="py-3 text-center align-middle">
               <div
-                className={`mx-auto h-7 w-7 rounded-md ${isBeforeCreation ? 'bg-surface-muted/30' : 'bg-surface-muted/50'} ${isToday ? 'ring-1 ring-primary/50' : ''}`}
+                className={`mx-auto h-7 w-7 rounded-md ${
+                  isBeforeCreation ? 'bg-surface-muted/30' : 'bg-surface-muted/50'
+                } ${isToday ? 'ring-1 ring-primary/50' : ''}`}
               />
             </td>
           );
         }
 
+        const isWeekend = (() => { const d = new Date(dateStr); return d.getDay() === 0 || d.getDay() === 6; })();
+        const isSkipped = habit.skipWeekends && isWeekend && !isDone;
+
         return (
-          <td key={dateStr} className="px-0.5 py-3 text-center align-middle">
+          <td key={dateStr} className="py-3 text-center align-middle">
             <button
-              disabled={acting || isPast}
-              onClick={() => onToggle(habit.id, dateStr, isDone)}
+              disabled={acting}
+              onClick={() => {
+                if (isPast && !isDone) {
+                  onMissedClick(habit.id, dateStr);
+                } else {
+                  onToggle(habit.id, dateStr, isDone);
+                }
+              }}
               title={
                 isPast
-                  ? isDone
-                    ? `Completed on ${dateStr}`
-                    : `Missed on ${dateStr}`
-                  : isDone
-                    ? `Undo: ${dateStr}`
-                    : `Mark done: ${dateStr}`
+                  ? isDone ? `Completed on ${dateStr}` : isSkipped ? `Skipped on ${dateStr}` : `Missed on ${dateStr}`
+                  : isDone ? `Undo: ${dateStr}` : `Mark done: ${dateStr}`
               }
               className={`
                 mx-auto flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold
-                transition-all duration-200
-                ${!isPast ? 'hover:scale-110 hover:shadow-md active:scale-95' : 'opacity-70 cursor-default'}
+                transition-all duration-200 hover:scale-110 hover:shadow-md active:scale-95
                 ${acting ? 'animate-pulse opacity-60' : ''}
                 ${isToday ? 'ring-2 ring-primary ring-offset-1 ring-offset-background' : ''}
                 ${
                   isDone
-                    ? 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400' +
-                      (!isPast ? ' hover:bg-green-500/30' : '')
-                    : 'bg-red-500/15 text-red-500 dark:bg-red-500/20 dark:text-red-400' +
-                      (!isPast ? ' hover:bg-red-500/25' : '')
+                    ? 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400'
+                    : isSkipped
+                      ? 'bg-surface-muted/40 text-text-muted opacity-70 hover:bg-surface-muted/60 hover:opacity-100'
+                      : 'bg-red-500/15 text-red-500 dark:bg-red-500/20 dark:text-red-400 hover:bg-red-500/25'
                 }
               `}
             >
-              {isDone ? '✓' : '✗'}
+              {isDone ? '✓' : isSkipped ? '-' : '✗'}
             </button>
           </td>
         );
@@ -250,16 +288,14 @@ function HeatmapRow({
 }
 
 function HabitStatsCard({ habits, todayStr }: { habits: Habit[]; todayStr: string }) {
-  const dateWindow = useMemo(() => buildDateWindow(WINDOW), []);
-
   const completedToday = habits.filter((h) =>
     h.logs?.some((l) => l.date.split('T')[0] === todayStr),
   ).length;
 
   const totalToday = habits.length;
 
-  const allStreaks = habits.map((h) => calcStreak(h, dateWindow));
-  const bestStreak = allStreaks.length ? Math.max(...allStreaks) : 0;
+  const allBestStreaks = habits.map((h) => h.bestStreak ?? 0);
+  const bestStreak = allBestStreaks.length ? Math.max(...allBestStreaks) : 0;
   const totalCompletions = habits.reduce((acc, h) => acc + (h.logs?.length ?? 0), 0);
 
   const stats = [
@@ -292,17 +328,17 @@ function HabitStatsCard({ habits, todayStr }: { habits: Habit[]; todayStr: strin
         <Sparkles size={12} />
         Overview
       </p>
-      <div className="space-y-2.5">
+      <div className="grid gap-4 md:grid-cols-3">
         {stats.map((s) => (
           <div
             key={s.label}
-            className={`flex items-center justify-between rounded-lg px-4 py-3 ${s.bg}`}
+            className={`flex items-center justify-between rounded-lg px-5 py-4 ${s.bg}`}
           >
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               {s.icon}
               <span className="text-sm font-medium text-foreground">{s.label}</span>
             </div>
-            <span className={`text-xl font-black tabular-nums ${s.color}`}>{s.value}</span>
+            <span className={`text-2xl font-black tabular-nums ${s.color}`}>{s.value}</span>
           </div>
         ))}
       </div>
@@ -320,6 +356,12 @@ function HeatmapLegend() {
       <div className="flex items-center gap-1.5">
         <div className="h-4 w-4 rounded bg-red-500/15" />
         <span>Missed</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="h-4 w-4 rounded bg-surface-muted/40 text-center text-[10px] font-bold text-text-muted leading-4">
+          -
+        </div>
+        <span>Skipped</span>
       </div>
       <div className="flex items-center gap-1.5">
         <div className="h-4 w-4 rounded bg-surface-muted/50" />
@@ -363,9 +405,38 @@ const HabitTracker = () => {
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [actingDate, setActingDate] = useState<string | null>(null);
   const [actingDelete, setActingDelete] = useState<Record<string, boolean>>({});
+  const [honestyPrompt, setHonestyPrompt] = useState<{ habitId: string; dateStr: string } | null>(
+    null,
+  );
+
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   const todayStr = useMemo(() => toLocalDateStr(new Date()), []);
-  const dateWindow = useMemo(() => buildDateWindow(WINDOW), []);
+
+  const oldestDateStr = useMemo(() => {
+    if (!habits || !habits.length) return todayStr;
+    return habits.reduce((oldest, h) => {
+      const hDate = toLocalDateStr(new Date(h.createdAt));
+      return hDate < oldest ? hDate : oldest;
+    }, todayStr);
+  }, [habits, todayStr]);
+
+  const daysDiff = useMemo(() => {
+    const start = new Date(`${oldestDateStr}T00:00:00`);
+    const end = new Date(`${todayStr}T00:00:00`);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return Math.max(diffDays, WINDOW);
+  }, [oldestDateStr, todayStr]);
+
+  const dateWindow = useMemo(() => buildDateWindow(daysDiff), [daysDiff]);
+
+  // Scroll to the rightmost (today) on mount / when dateWindow changes
+  React.useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+    }
+  }, [dateWindow]);
 
   const columnHeaders = useMemo(() => {
     return dateWindow.map((d, i) => {
@@ -375,8 +446,8 @@ const HabitTracker = () => {
     });
   }, [dateWindow]);
 
-  const handleCreateHabit = async (title: string, description: string) => {
-    await createHabit({ title, description: description || null });
+  const handleCreateHabit = async (title: string, description: string, skipWeekends: boolean) => {
+    await createHabit({ title, description: description || null, skipWeekends });
     toast.success('Habit created successfully');
   };
 
@@ -457,25 +528,31 @@ const HabitTracker = () => {
       {habits.length === 0 ? (
         <EmptyHabits onAdd={() => setIsModalOpen(true)} />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
-          <div className="rounded-lg border border-border bg-surface min-w-0">
+        <div className="flex flex-col gap-6">
+          <HabitStatsCard habits={habits} todayStr={todayStr} />
+
+          <div className="rounded-lg border border-border bg-surface overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
               <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
-                Last {WINDOW} Days
+                Habit History
               </p>
               <HeatmapLegend />
             </div>
-            <div className="overflow-x-auto px-5 py-3">
+
+            <div className="px-5 pb-3">
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="w-48 min-w-44 py-2 pr-4 text-left text-[11px] font-bold uppercase tracking-widest text-text-muted">
+                    <th
+                      className="py-2 pr-4 text-left text-[11px] font-bold uppercase tracking-widest text-text-muted"
+                      style={{ minWidth: `${NAME_W}px` }}
+                    >
                       Habit
                     </th>
                     {columnHeaders.map(({ dateStr, day, month, showMonth }) => (
                       <th
                         key={dateStr}
-                        className={`px-0.5 py-2 text-center align-bottom text-[10px] font-semibold tabular-nums ${
+                        className={`py-2 text-center align-bottom text-[10px] font-semibold tabular-nums ${
                           dateStr === todayStr ? 'text-primary' : 'text-text-muted'
                         }`}
                       >
@@ -499,6 +576,7 @@ const HabitTracker = () => {
                       todayStr={todayStr}
                       actingDate={actingDate}
                       onToggle={handleToggle}
+                      onMissedClick={(habitId, dateStr) => setHonestyPrompt({ habitId, dateStr })}
                       onDelete={handleDeleteHabit}
                       onViewDetails={setSelectedHabit}
                       isDeleting={actingDelete[habit.id] ?? false}
@@ -507,9 +585,6 @@ const HabitTracker = () => {
                 </tbody>
               </table>
             </div>
-          </div>
-          <div className="lg:sticky lg:top-6 lg:self-start">
-            <HabitStatsCard habits={habits} todayStr={todayStr} />
           </div>
         </div>
       )}
@@ -524,6 +599,21 @@ const HabitTracker = () => {
         isOpen={selectedHabit !== null}
         onClose={() => setSelectedHabit(null)}
         habit={selectedHabit}
+      />
+
+      <ConfirmationModal
+        isOpen={honestyPrompt !== null}
+        onClose={() => setHonestyPrompt(null)}
+        onConfirm={() => {
+          if (honestyPrompt) {
+            handleToggle(honestyPrompt.habitId, honestyPrompt.dateStr, false);
+            setHonestyPrompt(null);
+          }
+        }}
+        title="Be honest !"
+        description="Did you really complete this ?"
+        confirmText="Yes, I did!"
+        isPending={false}
       />
     </div>
   );

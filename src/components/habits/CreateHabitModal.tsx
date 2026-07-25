@@ -4,7 +4,7 @@ import { Sparkles, X, Plus } from 'lucide-react';
 interface CreateHabitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (title: string, description: string) => Promise<void>;
+  onSubmit: (title: string, description: string, skipWeekends: boolean) => Promise<void>;
 }
 
 export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
@@ -14,6 +14,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [skipWeekends, setSkipWeekends] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,9 +28,10 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
     setError(null);
 
     try {
-      await onSubmit(title, description);
+      await onSubmit(title, description, skipWeekends);
       setTitle('');
       setDescription('');
+      setSkipWeekends(false);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create habit');
@@ -117,9 +119,28 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add some details or motivation..."
-                className="min-h-[100px] w-full rounded-lg border border-border bg-surface p-3 text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                className="min-h-25 w-full rounded-lg border border-border bg-surface p-3 text-text placeholder-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 disabled={isSubmitting}
               />
+            </div>
+
+            <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-4">
+              <div>
+                <label className="text-sm font-medium text-text">Skip Weekends</label>
+                <p className="text-xs text-text-muted">
+                  Don't break your streak on Saturday and Sunday.
+                </p>
+              </div>
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  className="peer sr-only"
+                  checked={skipWeekends}
+                  onChange={(e) => setSkipWeekends(e.target.checked)}
+                  disabled={isSubmitting}
+                />
+                <div className="peer h-6 w-11 rounded-full bg-surface-muted after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 dark:border-gray-600 dark:bg-gray-700"></div>
+              </label>
             </div>
 
             <div className="flex justify-end gap-3 pt-4">

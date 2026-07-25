@@ -13,6 +13,40 @@ const normalizeText = (value: unknown) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+function computeBestStreak(logs: {date: Date}[], skipWeekends: boolean): number {
+  if (logs.length === 0) return 0;
+  
+  const sortedDates = logs.map(l => l.date.toISOString().split('T')[0]).sort();
+  const logSet = new Set(sortedDates);
+  const uniqueDates = Array.from(logSet).sort();
+  
+  if (uniqueDates.length === 0) return 0;
+  
+  let bestStreak = 0;
+  let currentStreak = 0;
+  
+  const firstDate = new Date(`${uniqueDates[0]}T00:00:00Z`);
+  const lastDate = new Date(`${uniqueDates[uniqueDates.length - 1]}T00:00:00Z`);
+  
+  for (let d = new Date(firstDate); d <= lastDate; d.setUTCDate(d.getUTCDate() + 1)) {
+    const dateStr = d.toISOString().split('T')[0];
+    if (logSet.has(dateStr)) {
+      currentStreak++;
+      if (currentStreak > bestStreak) {
+        bestStreak = currentStreak;
+      }
+    } else {
+      const isWeekend = d.getUTCDay() === 0 || d.getUTCDay() === 6;
+      if (skipWeekends && isWeekend) {
+        // Free pass
+      } else {
+        currentStreak = 0;
+      }
+    }
+  }
+  return bestStreak;
+}
+
 const mapHabitRecord = (habit: {
   id: string;
   userId: string;
@@ -20,6 +54,8 @@ const mapHabitRecord = (habit: {
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
+  skipWeekends: boolean;
+  bestStreak: number;
   logs?: {
     id: string;
     habitId: string;
@@ -33,6 +69,8 @@ const mapHabitRecord = (habit: {
   description: habit.description,
   createdAt: habit.createdAt.toISOString(),
   updatedAt: habit.updatedAt.toISOString(),
+  skipWeekends: habit.skipWeekends,
+  bestStreak: Math.max(habit.bestStreak, computeBestStreak(habit.logs || [], habit.skipWeekends)),
   logs: habit.logs?.map((log) => ({
     id: log.id,
     habitId: log.habitId,
@@ -56,6 +94,7 @@ export const parseHabitPayload = (payload: unknown): Required<HabitPayload> => {
   return {
     title,
     description: normalizeText(rawPayload.description),
+    skipWeekends: typeof rawPayload.skipWeekends === 'boolean' ? rawPayload.skipWeekends : false,
   };
 };
 
@@ -65,6 +104,7 @@ export const createHabit = async (userId: string, payload: Required<HabitPayload
       userId,
       title: payload.title,
       description: payload.description,
+      skipWeekends: payload.skipWeekends,
     },
     include: {
       logs: true,
@@ -127,6 +167,7 @@ export const updateHabit = async (
     data: {
       title: payload.title,
       description: payload.description,
+      skipWeekends: payload.skipWeekends,
     },
     include: {
       logs: true,
@@ -176,6 +217,19 @@ export const logHabitCompletion = async (userId: string, habitId: string, date: 
     },
   });
 
+  const allLogs = await prisma.habitLog.findMany({
+    where: { habitId },
+  });
+
+  const newBestStreak = computeBestStreak(allLogs, existingHabit.skipWeekends);
+
+  if (existingHabit.bestStreak !== newBestStreak) {
+    await prisma.habit.update({
+      where: { id: habitId },
+      data: { bestStreak: newBestStreak },
+    });
+  }
+
   return log;
 };
 
@@ -199,6 +253,19 @@ export const undoHabitCompletion = async (userId: string, habitId: string, date:
       date: parsedDate,
     },
   });
+
+  const allLogs = await prisma.habitLog.findMany({
+    where: { habitId },
+  });
+
+  const newBestStreak = computeBestStreak(allLogs, existingHabit.skipWeekends);
+
+  if (existingHabit.bestStreak !== newBestStreak) {
+    await prisma.habit.update({
+      where: { id: habitId },
+      data: { bestStreak: newBestStreak },
+    });
+  }
 
   return true;
 };

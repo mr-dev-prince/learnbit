@@ -3,9 +3,11 @@ model Habit {
     userId      String
     title       String
     description String?
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    logs        HabitLog[]
+    createdAt    DateTime   @default(now())
+    updatedAt    DateTime   @updatedAt
+    skipWeekends Boolean    @default(false)
+    bestStreak   Int        @default(0)
+    logs         HabitLog[]
 }
 
 model HabitLog {

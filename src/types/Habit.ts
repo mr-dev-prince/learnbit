@@ -5,6 +5,8 @@ export interface Habit {
   description: string | null;
   createdAt: string;
   updatedAt: string;
+  skipWeekends: boolean;
+  bestStreak: number;
   logs?: HabitLog[];
 }
 
@@ -18,4 +20,5 @@ export interface HabitLog {
 export interface HabitPayload {
   title: string;
   description?: string | null;
+  skipWeekends?: boolean;
 }
