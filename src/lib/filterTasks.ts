@@ -38,12 +38,12 @@ function getPeriodRange(period: TaskFilterPeriod): { start: Date; end: Date } {
 
 /**
  * Filters tasks whose `dueDate` falls within the selected period.
- * Tasks without a dueDate are excluded.
+ * Tasks without a dueDate are always included in every filter.
  */
 export function filterTasksByPeriod(tasks: Task[], period: TaskFilterPeriod): Task[] {
   const { start, end } = getPeriodRange(period);
   return tasks.filter((task) => {
-    if (!task.dueDate) return false;
+    if (!task.dueDate) return true;
     const due = new Date(task.dueDate);
     return due >= start && due < end;
   });

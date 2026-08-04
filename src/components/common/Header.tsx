@@ -12,6 +12,12 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
   const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const displayName = fullName.trim() || email;
   const initials = displayName
     .split(' ')
@@ -48,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
             style={{ borderColor: 'var(--border)', color: 'var(--foreground)' }}
             aria-label="Toggle theme"
           >
-            {theme === 'dark' ? <SunMedium size={18} /> : <MoonStar size={18} />}
+            {mounted && theme === 'dark' ? <SunMedium size={18} /> : <MoonStar size={18} />}
           </button>
 
           <div className="h-6 w-px bg-border" />
