@@ -26,7 +26,7 @@ export interface UpdateActivityPayload {
 export const getDayPlanner = async (userId: string, date: Date) => {
   // Reset time to start of day for accurate lookup
   const searchDate = new Date(date);
-  searchDate.setHours(0, 0, 0, 0);
+  searchDate.setUTCHours(0, 0, 0, 0);
 
   return prisma.dayPlanner.findFirst({
     where: {
@@ -45,7 +45,7 @@ export const getDayPlanner = async (userId: string, date: Date) => {
 
 export const createDayPlanner = async (userId: string, payload: CreateDayPlannerPayload) => {
   const searchDate = new Date(payload.date);
-  searchDate.setHours(0, 0, 0, 0);
+  searchDate.setUTCHours(0, 0, 0, 0);
 
   let availableMinutes = Math.floor((payload.sleepTime.getTime() - payload.wakeTime.getTime()) / 60000);
   // Handle cross-midnight sleep where wakeTime is after sleepTime (e.g. sleep 23:00, wake 07:00)

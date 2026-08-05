@@ -9,8 +9,11 @@ import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 export default function DayPlannerPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
-  // Format the date to YYYY-MM-DD for the query
-  const dateStr = selectedDate.toISOString();
+  // Format the date to YYYY-MM-DD in local time for the query
+  const year = selectedDate.getFullYear();
+  const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(selectedDate.getDate()).padStart(2, '0');
+  const dateStr = `${year}-${month}-${day}`;
   
   const { planner, isLoading, createPlanner, updatePlanner, createActivity, updateActivity, deleteActivity } = useDayPlanner(dateStr);
 
@@ -84,7 +87,7 @@ export default function DayPlannerPage() {
             date={selectedDate} 
             onSetup={async (wakeTime, sleepTime) => {
               await createPlanner({
-                date: selectedDate.toISOString(),
+                date: dateStr,
                 wakeTime: wakeTime.toISOString(),
                 sleepTime: sleepTime.toISOString(),
               });
