@@ -96,7 +96,7 @@ export default function ActivityForm({ plannerId, suggestedStartTime, onClose, o
             </div>
           </div>
 
-          <div className="flex-1 min-h-[300px] flex flex-col">
+          <div className="flex-1 min-h-75 flex flex-col">
             <label className="block text-sm font-semibold mb-1 text-foreground">Notes (Optional)</label>
             <div className="flex-1 border border-border rounded-lg overflow-hidden bg-background">
               <LexicalEditor
