@@ -1,0 +1,29 @@
+model DayPlanner {
+    id               String     @id @default(cuid())
+    userId           String
+    date             DateTime
+    wakeTime         DateTime
+    sleepTime        DateTime
+    availableMinutes Int
+    remainingMinutes Int
+    activities       Activity[]
+    createdAt        DateTime   @default(now())
+    updatedAt        DateTime   @updatedAt
+
+    @@unique([userId, date])
+}
+
+model Activity {
+    id              String     @id @default(cuid())
+    plannerId       String
+    title           String
+    notes           String?
+    startTime       DateTime
+    endTime         DateTime
+    durationMinutes Int
+    completed       Boolean    @default(false)
+    createdAt       DateTime   @default(now())
+    updatedAt       DateTime   @updatedAt
+    
+    planner         DayPlanner @relation(fields: [plannerId], references: [id], onDelete: Cascade)
+}

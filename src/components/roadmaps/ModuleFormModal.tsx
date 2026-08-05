@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import LexicalEditor from '@/components/notes/LexicalEditor';
+import LexicalEditor from '@/components/common/LexicalEditor';
 import type { RoadmapModule, ModulePayload, ModuleStatus } from '@/types/Roadmap';
 
 interface ModuleFormModalProps {

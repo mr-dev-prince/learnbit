@@ -52,10 +52,10 @@ const Sidebar: React.FC = () => {
       href: '/habits',
     },
     {
-      id: 'notes',
-      label: 'Notes',
-      icon: <PencilLine size={20} />,
-      href: '/notes',
+      id: 'day-planner',
+      label: 'Day Planner',
+      icon: <CalendarDays size={20} />,
+      href: '/day-planner',
     },
     {
       id: 'roadmaps',

@@ -1,7 +1,7 @@
 'use client';
 
 import { BookOpen, X, CircleDashed, CheckCircle, Clock3 } from 'lucide-react';
-import LexicalEditor from '@/components/notes/LexicalEditor';
+import LexicalEditor from '@/components/common/LexicalEditor';
 import type { RoadmapModule } from '@/types/Roadmap';
 
 interface ModuleViewModalProps {

@@ -45,10 +45,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
-      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeInitializer }} />
         <ReduxProvider>
           <Providers>
             <ThemeProvider>{children}</ThemeProvider>
