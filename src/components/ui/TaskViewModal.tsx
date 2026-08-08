@@ -64,7 +64,9 @@ const STATUS_CONFIG = {
 
 function getTimeAgo(date?: string | null): string {
   if (!date) return '';
-  const diff = Date.now() - new Date(date).getTime();
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const diff = Date.now() - d.getTime();
   const mins = Math.floor(diff / 60000);
   const hours = Math.floor(mins / 60);
   const days = Math.floor(hours / 24);
@@ -72,7 +74,7 @@ function getTimeAgo(date?: string | null): string {
   if (mins < 60) return `${mins}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 7) return `${days}d ago`;
-  return new Date(date).toLocaleDateString('en-GB', {
+  return d.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -106,9 +108,10 @@ export default function TaskViewModal({
 
   if (!isOpen || !task) return null;
 
-  const status = STATUS_CONFIG[task.status];
+  const status = STATUS_CONFIG[task.status] || STATUS_CONFIG.TODO;
   const StatusIcon = status.icon;
   const timeAgo = getTimeAgo(task.updatedAt);
+  const resourceLinks = task.resourceLinks || [];
 
   const handleStartEdit = () => {
     setEditDescription(task.description || '');
@@ -250,10 +253,10 @@ export default function TaskViewModal({
                 <span>Last updated {timeAgo}</span>
               </div>
             </div>
-            {!isEditing && (
+            {!isEditing && task.dueDate && (
               <div className="flex items-center gap-1.5 text-[13px] text-text-muted">
                 <Calendar size={13} strokeWidth={2} className="opacity-50" />
-                <p>{formatDateTime(task.dueDate || '')}</p>
+                <p>{formatDateTime(task.dueDate)}</p>
               </div>
             )}
           </div>
@@ -398,16 +401,16 @@ export default function TaskViewModal({
                 <h2 className="text-[13px] font-bold uppercase tracking-widest text-text-muted">
                   Resources
                 </h2>
-                {task.resourceLinks.length > 0 && (
+                {resourceLinks.length > 0 && (
                   <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
-                    {task.resourceLinks.length}
+                    {resourceLinks.length}
                   </span>
                 )}
               </div>
 
-              {task.resourceLinks.length > 0 ? (
+              {resourceLinks.length > 0 ? (
                 <div className="space-y-2">
-                  {task.resourceLinks.map((link, index) => (
+                  {resourceLinks.map((link, index) => (
                     <a
                       key={index}
                       href={link}

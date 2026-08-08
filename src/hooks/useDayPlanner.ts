@@ -26,8 +26,13 @@ export function useDayPlanner(date: string) {
   });
 
   const updatePlannerMutation = useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: { wakeTime?: string; sleepTime?: string } }) =>
-      updateDayPlanner(id, payload),
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: { wakeTime?: string; sleepTime?: string };
+    }) => updateDayPlanner(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: DAY_PLANNER_QUERY_KEY(date) });
     },

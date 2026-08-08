@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Sparkles, X } from 'lucide-react';
 
 import TaskForm from './TaskForm';
@@ -10,10 +12,17 @@ interface QuickAddModalProps {
 }
 
 export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
       {/* Backdrop */}
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
 
@@ -57,6 +66,7 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
           <TaskForm onSuccess={onClose} />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

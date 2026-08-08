@@ -128,7 +128,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
               <div>
                 <label className="text-sm font-medium text-text">Skip Weekends</label>
                 <p className="text-xs text-text-muted">
-                  Don't break your streak on Saturday and Sunday.
+                  Don&apos;t break your streak on Saturday and Sunday.
                 </p>
               </div>
               <label className="relative inline-flex cursor-pointer items-center">

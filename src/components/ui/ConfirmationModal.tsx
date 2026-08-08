@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, Info } from 'lucide-react';
 
 interface ConfirmationModalProps {
@@ -27,11 +29,18 @@ export default function ConfirmationModal({
   isDestructive = true,
   isPending = false,
 }: ConfirmationModalProps) {
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-2 backdrop-blur-md"
       onClick={(e) => e.stopPropagation()}
     >
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
@@ -126,6 +135,7 @@ export default function ConfirmationModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

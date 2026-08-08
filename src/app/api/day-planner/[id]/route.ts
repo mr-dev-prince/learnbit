@@ -9,7 +9,7 @@ export const PUT = (request: NextRequest, { params }: { params: Promise<{ id: st
     const user = await getAuthenticatedUser();
     const resolvedParams = await params;
     const body = await request.json();
-    
+
     const payload: { wakeTime?: Date; sleepTime?: Date } = {};
     if (body.wakeTime) payload.wakeTime = new Date(body.wakeTime);
     if (body.sleepTime) payload.sleepTime = new Date(body.sleepTime);

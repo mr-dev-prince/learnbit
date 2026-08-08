@@ -9,7 +9,7 @@ export const PUT = (request: NextRequest, { params }: { params: Promise<{ id: st
     const user = await getAuthenticatedUser();
     const resolvedParams = await params;
     const body = await request.json();
-    
+
     const payload: UpdateActivityPayload = {};
     if (body.title !== undefined) payload.title = body.title;
     if (body.notes !== undefined) payload.notes = body.notes;
@@ -25,7 +25,7 @@ export const DELETE = (request: NextRequest, { params }: { params: Promise<{ id:
   apiHandler(async () => {
     const user = await getAuthenticatedUser();
     const resolvedParams = await params;
-    
+
     await deleteActivity(user.id, resolvedParams.id);
     return new ApiResponse(null, 'Activity deleted successfully', 200);
   });

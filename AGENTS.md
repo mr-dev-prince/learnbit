@@ -125,19 +125,19 @@ import type { User } from '@/types/User';
 
 ```bash
 # Development
-npm run dev              # Start dev server on localhost:3000
+bun dev                 # Start dev server on localhost:3000
 
 # Production
-npm run build            # Build for production
-npm start                # Start production server
+bun run build           # Build for production
+bun start               # Start production server
 
 # Linting & Formatting
-npm run lint             # Run ESLint check
-npm run lint:fix         # Fix ESLint issues
-npm run format           # Format code with Prettier
+bun run lint            # Run ESLint check
+bun run lint:fix        # Fix ESLint issues
+bun run format          # Format code with Prettier
 
 # Type Checking
-npx tsc --noEmit         # Check TypeScript types
+bun x tsc --noEmit      # Check TypeScript types
 ```
 
 ## Common Development Patterns
@@ -235,8 +235,8 @@ Before implementing a feature:
 ## Important Notes
 
 - This is a Next.js 16+ project with the latest features
-- Always run `npm run lint` before committing
-- Always use `npm run format` to format code before submitting PR
+- Always run `bun run lint` before committing
+- Always use `bun run format` to format code before submitting PR
 - TypeScript strict mode is enabled
 - No JavaScript files (.js) - use TypeScript (.ts/.tsx) only
 

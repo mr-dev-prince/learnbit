@@ -4,7 +4,7 @@ import type { Habit } from '@/types/Habit';
 import { calcStreak, toLocalDateStr } from '@/utils/habitUtils';
 import ConfirmationModal from '@/components/ui/ConfirmationModal';
 
-export const NAME_W = 220; 
+export const NAME_W = 220;
 
 interface HeatmapRowProps {
   habit: Habit;
@@ -49,7 +49,9 @@ export function HeatmapRow({
           {streak > 0 ? (
             <div className="shrink-0 flex items-center bg-linear-to-tr from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-full px-2 py-0.5">
               <Flame size={10} className="text-orange-500 mr-1" />
-              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400">{streak}</span>
+              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400">
+                {streak}
+              </span>
             </div>
           ) : (
             <div className="shrink-0 flex items-center bg-surface-muted/30 border border-border/50 rounded-full px-2 py-0.5">
@@ -79,7 +81,10 @@ export function HeatmapRow({
           <ConfirmationModal
             isOpen={showDeleteConfirm}
             onClose={() => setShowDeleteConfirm(false)}
-            onConfirm={() => { onDelete(habit.id); setShowDeleteConfirm(false); }}
+            onConfirm={() => {
+              onDelete(habit.id);
+              setShowDeleteConfirm(false);
+            }}
             title="Delete Habit"
             description="Are you sure you want to delete this habit ? This action cannot be undone."
             confirmText="Delete"
@@ -110,7 +115,10 @@ export function HeatmapRow({
           );
         }
 
-        const isWeekend = (() => { const d = new Date(dateStr); return d.getDay() === 0 || d.getDay() === 6; })();
+        const isWeekend = (() => {
+          const d = new Date(dateStr);
+          return d.getDay() === 0 || d.getDay() === 6;
+        })();
         const isSkipped = habit.skipWeekends && isWeekend && !isDone;
 
         return (
@@ -126,8 +134,14 @@ export function HeatmapRow({
               }}
               title={
                 isPast
-                  ? isDone ? `Completed on ${dateStr}` : isSkipped ? `Skipped on ${dateStr}` : `Missed on ${dateStr}`
-                  : isDone ? `Undo: ${dateStr}` : `Mark done: ${dateStr}`
+                  ? isDone
+                    ? `Completed on ${dateStr}`
+                    : isSkipped
+                      ? `Skipped on ${dateStr}`
+                      : `Missed on ${dateStr}`
+                  : isDone
+                    ? `Undo: ${dateStr}`
+                    : `Mark done: ${dateStr}`
               }
               className={`
                 mx-auto flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold

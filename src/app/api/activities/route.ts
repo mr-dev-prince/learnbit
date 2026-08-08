@@ -8,7 +8,7 @@ export const POST = (request: NextRequest) =>
   apiHandler(async () => {
     const user = await getAuthenticatedUser();
     const body = await request.json();
-    
+
     if (!body.plannerId || !body.title || !body.startTime || !body.endTime) {
       throw new Error('Missing required fields');
     }

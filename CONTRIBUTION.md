@@ -32,22 +32,22 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 ## Development Setup
 
-1. Ensure you have Node.js (v18+) and npm installed
+1. Ensure you have Bun (v1.3+) installed
 2. Install dependencies:
    ```bash
-   npm install
+   bun install
    ```
 3. Start the development server:
    ```bash
-   npm run dev
+   bun dev
    ```
 4. Open [http://localhost:3000](http://localhost:3000) to see the application
 
 ### Build for Production
 
 ```bash
-npm run build
-npm start
+bun run build
+bun start
 ```
 
 ## Making Changes
@@ -67,9 +67,9 @@ npm start
 4. Format and lint your code:
 
    ```bash
-   npm run format
-   npm run lint
-   npm run lint:fix
+   bun run format
+   bun run lint
+   bun run lint:fix
    ```
 
 5. Commit your changes following [Commit Guidelines](#commit-guidelines)
@@ -200,13 +200,13 @@ npm test -- --coverage  # Generate coverage report
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-- `npm run format` - Format code with Prettier
-- `npm test` - Run tests
+- `bun dev` - Start development server
+- `bun run build` - Build for production
+- `bun start` - Start production server
+- `bun run lint` - Run ESLint
+- `bun run lint:fix` - Fix ESLint issues
+- `bun run format` - Format code with Prettier
+- `bun test` - Run tests
 
 ## Questions or Need Help?
 

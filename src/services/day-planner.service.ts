@@ -13,11 +13,18 @@ export const getDayPlanner = async (date: string): Promise<DayPlannerWithActivit
   }
 };
 
-export const createDayPlanner = async (payload: { date: string; wakeTime: string; sleepTime: string }): Promise<DayPlannerWithActivities> => {
+export const createDayPlanner = async (payload: {
+  date: string;
+  wakeTime: string;
+  sleepTime: string;
+}): Promise<DayPlannerWithActivities> => {
   return await api.post<DayPlannerWithActivities>('/api/day-planner', payload);
 };
 
-export const updateDayPlanner = async (id: string, payload: { wakeTime?: string; sleepTime?: string }): Promise<DayPlannerWithActivities> => {
+export const updateDayPlanner = async (
+  id: string,
+  payload: { wakeTime?: string; sleepTime?: string },
+): Promise<DayPlannerWithActivities> => {
   return await api.put<DayPlannerWithActivities>(`/api/day-planner/${id}`, payload);
 };
 
@@ -39,7 +46,7 @@ export const updateActivity = async (
     startTime?: string;
     endTime?: string;
     completed?: boolean;
-  }
+  },
 ): Promise<Activity> => {
   return await api.put<Activity>(`/api/activities/${id}`, payload);
 };

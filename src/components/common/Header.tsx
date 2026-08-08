@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bell, MoonStar, Search, SunMedium } from 'lucide-react';
+import { MoonStar, Search, SunMedium } from 'lucide-react';
 import { useTheme } from '@/components/providers/ThemeProvider';
 
 interface HeaderProps {
@@ -15,6 +15,7 @@ const Header: React.FC<HeaderProps> = ({ email, fullName }) => {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

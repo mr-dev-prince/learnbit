@@ -47,7 +47,9 @@ export const createDayPlanner = async (userId: string, payload: CreateDayPlanner
   const searchDate = new Date(payload.date);
   searchDate.setUTCHours(0, 0, 0, 0);
 
-  let availableMinutes = Math.floor((payload.sleepTime.getTime() - payload.wakeTime.getTime()) / 60000);
+  let availableMinutes = Math.floor(
+    (payload.sleepTime.getTime() - payload.wakeTime.getTime()) / 60000,
+  );
   // Handle cross-midnight sleep where wakeTime is after sleepTime (e.g. sleep 23:00, wake 07:00)
   if (availableMinutes < 0) {
     availableMinutes += 24 * 60;
@@ -71,9 +73,12 @@ export const createDayPlanner = async (userId: string, payload: CreateDayPlanner
 export const updateDayPlanner = async (
   userId: string,
   id: string,
-  payload: { wakeTime?: Date; sleepTime?: Date }
+  payload: { wakeTime?: Date; sleepTime?: Date },
 ) => {
-  const existing = await prisma.dayPlanner.findUnique({ where: { id, userId }, include: { activities: true } });
+  const existing = await prisma.dayPlanner.findUnique({
+    where: { id, userId },
+    include: { activities: true },
+  });
   if (!existing) throw new Error('Planner not found');
 
   const newWakeTime = payload.wakeTime || existing.wakeTime;
@@ -112,7 +117,9 @@ export const createActivity = async (userId: string, payload: CreateActivityPayl
   });
   if (!planner) throw new Error('Planner not found');
 
-  let durationMinutes = Math.floor((payload.endTime.getTime() - payload.startTime.getTime()) / 60000);
+  let durationMinutes = Math.floor(
+    (payload.endTime.getTime() - payload.startTime.getTime()) / 60000,
+  );
   if (durationMinutes < 0) {
     durationMinutes += 24 * 60;
   }
@@ -141,7 +148,11 @@ export const createActivity = async (userId: string, payload: CreateActivityPayl
   return activity;
 };
 
-export const updateActivity = async (userId: string, id: string, payload: UpdateActivityPayload) => {
+export const updateActivity = async (
+  userId: string,
+  id: string,
+  payload: UpdateActivityPayload,
+) => {
   const existingActivity = await prisma.activity.findUnique({
     where: { id },
     include: { planner: true },
@@ -208,7 +219,8 @@ export const deleteActivity = async (userId: string, id: string) => {
   await prisma.dayPlanner.update({
     where: { id: existingActivity.plannerId },
     data: {
-      remainingMinutes: existingActivity.planner.remainingMinutes + existingActivity.durationMinutes,
+      remainingMinutes:
+        existingActivity.planner.remainingMinutes + existingActivity.durationMinutes,
     },
   });
 

@@ -68,11 +68,11 @@ learnbit/
 ### Available Commands
 
 ```bash
-npm run dev           # Start development server
-npm run build         # Build for production
-npm run lint          # Check code quality
-npm run lint:fix      # Fix linting issues
-npm run format        # Format code with Prettier
+bun dev           # Start development server
+bun run build     # Build for production
+bun run lint      # Check code quality
+bun run lint:fix  # Fix linting issues
+bun run format    # Format code with Prettier
 ```
 
 ## Key Principles
@@ -89,7 +89,7 @@ When adding new features or making changes:
 
 1. Follow the patterns documented in COMPONENT_PATTERNS.md
 2. Adhere to conventions in CONVENTIONS.md
-3. Run `npm run lint:fix` and `npm run format` before committing
+3. Run `bun run lint:fix` and `bun run format` before committing
 4. Update this documentation if you change architecture or patterns
 
 ---

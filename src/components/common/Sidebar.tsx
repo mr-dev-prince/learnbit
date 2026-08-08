@@ -11,7 +11,6 @@ import {
   Plus,
   CalendarDays,
   Map,
-  PencilLine,
 } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
@@ -31,6 +30,31 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const dispatch = useAppDispatch();
   const isQuickAddOpen = useAppSelector((state) => state.modal.quickAddOpen);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const collapsedVideoRef = React.useRef<HTMLVideoElement>(null);
+
+  React.useEffect(() => {
+    [videoRef, collapsedVideoRef].forEach((ref) => {
+      if (ref.current) {
+        ref.current.defaultMuted = true;
+        ref.current.muted = true;
+        ref.current.play().catch(() => {});
+      }
+    });
+  }, [isCollapsed]);
+
+  const handleMouseEnter = (ref: React.RefObject<HTMLVideoElement | null>) => {
+    if (ref.current) {
+      ref.current.muted = false;
+      ref.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = (ref: React.RefObject<HTMLVideoElement | null>) => {
+    if (ref.current) {
+      ref.current.muted = true;
+    }
+  };
 
   const navItems: NavItem[] = [
     {
@@ -105,38 +129,78 @@ const Sidebar: React.FC = () => {
           )}
         </div>
 
-        <nav className="flex-1 px-2 py-3 space-y-3">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`group relative flex items-center ${isCollapsed ? 'justify-center' : ''} gap-3 p-3 rounded-lg transition-all duration-200 ${
-                  isActive ? 'bg-primary/20' : 'hover:bg-primary/10 hover:text-foreground'
-                }`}
-                style={{ color: 'var(--foreground)' }}
-                title={isCollapsed ? item.label : undefined}
-              >
-                <span
-                  className="shrink-0 text-xl"
-                  style={{ color: isActive ? 'var(--primary)' : 'var(--primary)' }}
+        <nav className="flex-1 flex flex-col justify-between px-2 py-3 overflow-y-auto">
+          <div className="space-y-3">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`group relative flex items-center ${isCollapsed ? 'justify-center' : ''} gap-3 p-3 rounded-lg transition-all duration-200 ${
+                    isActive ? 'bg-primary/20' : 'hover:bg-primary/10 hover:text-foreground'
+                  }`}
+                  style={{ color: 'var(--foreground)' }}
+                  title={isCollapsed ? item.label : undefined}
                 >
-                  {item.icon}
-                </span>
-                {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
-
-                {isCollapsed && (
-                  <div
-                    className="pointer-events-none absolute left-full z-50 ml-2 whitespace-nowrap rounded px-3 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
-                    style={{ backgroundColor: 'var(--primary)' }}
+                  <span
+                    className="shrink-0 text-xl"
+                    style={{ color: isActive ? 'var(--primary)' : 'var(--primary)' }}
                   >
-                    {item.label}
-                  </div>
-                )}
-              </Link>
-            );
-          })}
+                    {item.icon}
+                  </span>
+                  {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+
+                  {isCollapsed && (
+                    <div
+                      className="pointer-events-none absolute left-full z-50 ml-2 whitespace-nowrap rounded px-3 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      style={{ backgroundColor: 'var(--primary)' }}
+                    >
+                      {item.label}
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 px-1 flex items-center justify-center">
+            {!isCollapsed ? (
+              <div
+                className="group relative w-full flex items-center justify-center overflow-hidden rounded-xl cursor-pointer shadow-sm border border-border/40 transition-all duration-300 hover:shadow-md"
+                onMouseEnter={() => handleMouseEnter(videoRef)}
+                onMouseLeave={() => handleMouseLeave(videoRef)}
+              >
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-36 object-cover select-none"
+                >
+                  <source src="/assets/learnbit-audio.webm" type="video/webm" />
+                </video>
+              </div>
+            ) : (
+              <div
+                className="group relative w-full flex items-center justify-center overflow-hidden rounded-lg cursor-pointer shadow-sm border border-border/40 transition-all duration-300 hover:shadow-md"
+                onMouseEnter={() => handleMouseEnter(collapsedVideoRef)}
+                onMouseLeave={() => handleMouseLeave(collapsedVideoRef)}
+              >
+                <video
+                  ref={collapsedVideoRef}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-24 object-cover select-none"
+                >
+                  <source src="/assets/learnbit-audio.webm" type="video/webm" />
+                </video>
+              </div>
+            )}
+          </div>
         </nav>
 
         <div

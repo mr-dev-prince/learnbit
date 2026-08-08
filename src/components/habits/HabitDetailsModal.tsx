@@ -128,11 +128,14 @@ export function HabitDetailsModal({
 
             <div className="grid grid-cols-7 gap-1">
               {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                <div key={day} className="text-center text-[10px] font-bold uppercase tracking-wider text-text-muted mb-2">
+                <div
+                  key={day}
+                  className="text-center text-[10px] font-bold uppercase tracking-wider text-text-muted mb-2"
+                >
                   {day}
                 </div>
               ))}
-              
+
               {calendarCells.map((day, idx) => {
                 if (day === null) {
                   return <div key={`empty-${idx}`} className="h-8" />;
@@ -141,7 +144,7 @@ export function HabitDetailsModal({
                 // Format as YYYY-MM-DD
                 const d = new Date(currentYear, currentMonth, day);
                 const dateStr = toLocalDateStr(d);
-                
+
                 const isFuture = dateStr > todayStr;
                 const isBeforeCreation = dateStr < createdDay;
                 const isDone = logSet.has(dateStr);
@@ -156,7 +159,8 @@ export function HabitDetailsModal({
                   stateClass = isBeforeCreation ? 'bg-surface-muted/30' : 'bg-surface-muted/50';
                   stateChar = '';
                 } else if (isDone) {
-                  stateClass = 'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400';
+                  stateClass =
+                    'bg-green-500/20 text-green-600 dark:bg-green-500/25 dark:text-green-400';
                   stateChar = '✓';
                 } else if (isSkipped) {
                   stateClass = 'bg-surface-muted/40 text-text-muted opacity-70';
@@ -169,7 +173,9 @@ export function HabitDetailsModal({
 
                 return (
                   <div key={dateStr} className="flex flex-col items-center justify-center p-1">
-                    <span className={`text-[10px] mb-1 font-medium ${isToday ? 'text-primary font-bold' : 'text-text-muted'}`}>
+                    <span
+                      className={`text-[10px] mb-1 font-medium ${isToday ? 'text-primary font-bold' : 'text-text-muted'}`}
+                    >
                       {day}
                     </span>
                     <div

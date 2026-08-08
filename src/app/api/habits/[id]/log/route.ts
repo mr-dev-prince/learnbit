@@ -17,7 +17,7 @@ export const POST = (request: NextRequest, { params }: RouteContext) =>
 
     const body = await request.json();
     const date = body.date;
-    
+
     if (!date) {
       throw new Error('`date` is required.');
     }
