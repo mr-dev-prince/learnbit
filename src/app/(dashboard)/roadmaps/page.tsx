@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import RoadmapCard from '@/components/roadmaps/RoadmapCard';
 import RoadmapFormModal from '@/components/roadmaps/RoadmapFormModal';
 import {
@@ -31,11 +32,18 @@ export default function RoadmapsPage() {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (payload: RoadmapPayload) => {
-    if (editingRoadmap) {
-      updateRoadmap.mutate({ id: editingRoadmap.id, payload });
-    } else {
-      createRoadmap.mutate(payload);
+  const handleSubmit = async (payload: RoadmapPayload) => {
+    try {
+      if (editingRoadmap) {
+        await updateRoadmap.mutateAsync({ id: editingRoadmap.id, payload });
+        toast.success('Roadmap updated successfully');
+      } else {
+        await createRoadmap.mutateAsync(payload);
+        toast.success('Roadmap created successfully');
+      }
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to save roadmap');
+      throw error;
     }
   };
 

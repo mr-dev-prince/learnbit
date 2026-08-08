@@ -303,7 +303,7 @@ export default function TaskViewModal({
               ) : (
                 <div
                   className="
-                    min-h-[80px]
+                    min-h-20
                     cursor-pointer
                     rounded-lg
                     border
@@ -367,7 +367,7 @@ export default function TaskViewModal({
               ) : (
                 <div
                   className="
-                    min-h-[80px]
+                    min-h-20
                     cursor-pointer
                     rounded-lg
                     border
@@ -459,7 +459,7 @@ export default function TaskViewModal({
                           <p className="text-sm font-semibold text-foreground/90">
                             {extractDomain(link)}
                           </p>
-                          <p className="mt-0.5 truncate text-xs text-text-muted/50 max-w-[300px]">
+                          <p className="mt-0.5 truncate text-xs text-text-muted/50 max-w-75">
                             {link}
                           </p>
                         </div>
@@ -515,11 +515,7 @@ export default function TaskViewModal({
             </div>
           </div>
         </div>
-
-        {/* Divider */}
         <div className="mx-6 h-px bg-border sm:mx-8" />
-
-        {/* ──────────── FOOTER ──────────── */}
         <div className="flex items-center justify-end gap-2.5 px-6 py-4 sm:px-8 sm:py-5">
           {isEditing ? (
             <>

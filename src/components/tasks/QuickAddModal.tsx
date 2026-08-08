@@ -22,7 +22,7 @@ export default function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
   if (!isOpen || !mounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-2 backdrop-blur-md">
       {/* Backdrop */}
       <button aria-label="Close modal" onClick={onClose} className="absolute inset-0" />
 

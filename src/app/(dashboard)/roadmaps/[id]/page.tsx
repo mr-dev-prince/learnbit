@@ -3,6 +3,7 @@
 import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Clock, CircleDashed, CheckCircle, Clock3 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import ModuleCard from '@/components/roadmaps/ModuleCard';
 import ModuleFormModal from '@/components/roadmaps/ModuleFormModal';
 import ModuleViewModal from '@/components/roadmaps/ModuleViewModal';
@@ -55,11 +56,22 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
     setIsViewModalOpen(false);
   };
 
-  const handleSubmit = (payload: ModulePayload) => {
-    if (editingModule) {
-      updateModule.mutate({ roadmapId: resolvedParams.id, moduleId: editingModule.id, payload });
-    } else {
-      createModule.mutate({ roadmapId: resolvedParams.id, payload });
+  const handleSubmit = async (payload: ModulePayload) => {
+    try {
+      if (editingModule) {
+        await updateModule.mutateAsync({
+          roadmapId: resolvedParams.id,
+          moduleId: editingModule.id,
+          payload,
+        });
+        toast.success('Module updated successfully');
+      } else {
+        await createModule.mutateAsync({ roadmapId: resolvedParams.id, payload });
+        toast.success('Module created successfully');
+      }
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : 'Failed to save module');
+      throw error;
     }
   };
 

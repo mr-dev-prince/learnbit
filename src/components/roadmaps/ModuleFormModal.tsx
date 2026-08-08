@@ -20,11 +20,13 @@ export default function ModuleFormModal({
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ModuleStatus>('PLANNED');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setError(null);
       if (initialData) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTitle(initialData.title);
 
         setDescription(initialData.description || '');
@@ -47,6 +49,7 @@ export default function ModuleFormModal({
     if (!title.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setError(null);
     try {
       await onSubmit({
         title,
@@ -55,6 +58,8 @@ export default function ModuleFormModal({
         order: initialData?.order,
       });
       onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save module');
     } finally {
       setIsSubmitting(false);
     }
@@ -65,7 +70,8 @@ export default function ModuleFormModal({
       {/* Backdrop */}
       <button
         aria-label="Close modal"
-        onClick={onClose}
+        onClick={() => !isSubmitting && onClose()}
+        disabled={isSubmitting}
         className="absolute inset-0 w-full h-full cursor-default"
       />
 
@@ -99,14 +105,21 @@ export default function ModuleFormModal({
 
           <button
             onClick={onClose}
+            disabled={isSubmitting}
             aria-label="Close"
-            className="rounded-lg border border-border p-2 transition-all duration-200 hover:bg-surface-hover hover:rotate-90"
+            className="rounded-lg border border-border p-2 transition-all duration-200 hover:bg-surface-hover hover:rotate-90 disabled:opacity-50 disabled:pointer-events-none"
           >
             <X size={18} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto px-8 py-6">
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-500">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="mb-1.5 block text-sm font-semibold text-foreground">Title</label>
@@ -145,7 +158,8 @@ export default function ModuleFormModal({
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as ModuleStatus)}
-                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
+                disabled={isSubmitting}
+                className="w-full rounded-lg border border-border bg-surface-muted px-4 py-2.5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors disabled:opacity-50"
               >
                 <option value="PLANNED">Planned</option>
                 <option value="IN_PROGRESS">In Progress</option>
