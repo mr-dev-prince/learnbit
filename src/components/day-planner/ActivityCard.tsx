@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Activity } from '@prisma/client';
-import { Check, Edit2, Trash2, Clock, ChevronDown, ChevronUp, FileText } from 'lucide-react';
+import {
+  Check,
+  Edit2,
+  Trash2,
+  Clock,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Loader2,
+} from 'lucide-react';
 import LexicalEditor from '@/components/common/LexicalEditor';
 
 interface ActivityCardProps {
   activity: Activity;
   onEdit: () => void;
   onDelete: () => void;
-  onToggleComplete: () => void;
+  onToggleComplete: () => void | Promise<void>;
   isReadOnly?: boolean;
+  isToggling?: boolean;
 }
 
 export default function ActivityCard({
@@ -17,8 +27,23 @@ export default function ActivityCard({
   onDelete,
   onToggleComplete,
   isReadOnly = false,
+  isToggling: isPropToggling = false,
 }: ActivityCardProps) {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [isLocalToggling, setIsLocalToggling] = useState(false);
+
+  const isToggling = isPropToggling || isLocalToggling;
+
+  const handleToggleCompleteClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isReadOnly || isToggling) return;
+    setIsLocalToggling(true);
+    try {
+      await onToggleComplete();
+    } finally {
+      setIsLocalToggling(false);
+    }
+  };
 
   const formatTime = (dateStr: Date | string) => {
     return new Date(dateStr).toLocaleTimeString(undefined, {
@@ -39,33 +64,43 @@ export default function ActivityCard({
     <div className="relative pl-10 sm:pl-12">
       {/* Timeline Node Dot - Centered on vertical line at left-4 (16px) / sm:left-5 (20px) */}
       <button
-        onClick={isReadOnly ? undefined : onToggleComplete}
-        disabled={isReadOnly}
+        onClick={isReadOnly || isToggling ? undefined : handleToggleCompleteClick}
+        disabled={isReadOnly || isToggling}
         title={
-          isReadOnly
-            ? activity.completed
-              ? 'Completed'
-              : 'Incomplete'
-            : activity.completed
-              ? 'Mark incomplete'
-              : 'Mark complete'
+          isToggling
+            ? 'Updating status...'
+            : isReadOnly
+              ? activity.completed
+                ? 'Completed'
+                : 'Incomplete'
+              : activity.completed
+                ? 'Mark incomplete'
+                : 'Mark complete'
         }
         className={`absolute left-4 sm:left-5 top-5 -translate-x-1/2 z-10 flex h-6 w-6 items-center justify-center rounded-full border-2 transition-all ${
-          isReadOnly ? 'cursor-default' : 'cursor-pointer'
+          isReadOnly || isToggling ? 'cursor-default' : 'cursor-pointer'
         } ${
-          activity.completed
-            ? 'border-primary bg-primary text-white shadow-sm ring-4 ring-primary/15'
-            : isReadOnly
-              ? 'border-border-strong bg-surface text-transparent'
-              : 'border-border-strong bg-surface hover:border-primary text-transparent hover:text-primary/40'
+          isToggling
+            ? 'border-primary/50 bg-primary/10 text-primary shadow-xs ring-4 ring-primary/20 animate-pulse'
+            : activity.completed
+              ? 'border-primary bg-primary text-white shadow-sm ring-4 ring-primary/15'
+              : isReadOnly
+                ? 'border-border-strong bg-surface text-transparent'
+                : 'border-border-strong bg-surface hover:border-primary text-transparent hover:text-primary/40'
         }`}
       >
-        <Check size={12} strokeWidth={3} />
+        {isToggling ? (
+          <Loader2 size={12} className="animate-spin text-primary" />
+        ) : (
+          <Check size={12} strokeWidth={3} />
+        )}
       </button>
 
       {/* Main Activity Card Container */}
       <div
         className={`rounded-xl border transition-all duration-200 bg-surface shadow-sm ${
+          isToggling ? 'opacity-70 pointer-events-none' : ''
+        } ${
           activity.completed
             ? 'border-border/70 bg-surface/60'
             : 'border-border hover:border-primary/40 hover:shadow-md'

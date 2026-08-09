@@ -42,6 +42,7 @@ export default function PlannerDashboard({
 }: PlannerDashboardProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
+  const [togglingActivityId, setTogglingActivityId] = useState<string | null>(null);
 
   const [isEditingTimes, setIsEditingTimes] = useState(false);
   const [wakeTimeStr, setWakeTimeStr] = useState('');
@@ -116,8 +117,13 @@ export default function PlannerDashboard({
   };
 
   const handleToggleComplete = async (activity: Activity) => {
-    if (isReadOnly) return;
-    await updateActivity({ id: activity.id, payload: { completed: !activity.completed } });
+    if (isReadOnly || togglingActivityId === activity.id) return;
+    setTogglingActivityId(activity.id);
+    try {
+      await updateActivity({ id: activity.id, payload: { completed: !activity.completed } });
+    } finally {
+      setTogglingActivityId(null);
+    }
   };
 
   const formatMinutes = (mins: number) => {
@@ -364,6 +370,7 @@ export default function PlannerDashboard({
               onDelete={() => handleDelete(activity.id)}
               onToggleComplete={() => handleToggleComplete(activity as Activity)}
               isReadOnly={isReadOnly}
+              isToggling={togglingActivityId === activity.id}
             />
           ))}
 

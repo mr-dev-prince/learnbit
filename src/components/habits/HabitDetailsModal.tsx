@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import type { Habit } from '@/types/Habit';
 import { toLocalDateStr } from '@/utils/habitUtils';
 
@@ -13,11 +13,13 @@ export function HabitDetailsModal({
   habit: Habit | null;
 }) {
   const [currentDate, setCurrentDate] = useState(() => new Date());
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   React.useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentDate(new Date());
+      setIsDescriptionExpanded(false);
     }
   }, [isOpen]);
 
@@ -92,13 +94,24 @@ export function HabitDetailsModal({
 
         <div className="relative p-6 max-h-[80vh] overflow-y-auto">
           {habit.description && (
-            <div className="mb-6">
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-text-muted">
-                Description
-              </h3>
-              <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">
-                {habit.description}
-              </p>
+            <div className="mb-6 rounded-lg border border-border bg-surface-muted/30 p-3 transition-all">
+              <button
+                type="button"
+                onClick={() => setIsDescriptionExpanded((prev) => !prev)}
+                className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-text-muted hover:text-foreground transition-colors"
+              >
+                <span>Description</span>
+                <span className="flex items-center gap-1 text-xs font-medium text-primary">
+                  {isDescriptionExpanded ? 'Hide' : 'Show'}
+                  {isDescriptionExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </span>
+              </button>
+
+              {isDescriptionExpanded && (
+                <p className="mt-2.5 border-t border-border/50 pt-2.5 text-sm leading-relaxed text-foreground whitespace-pre-wrap">
+                  {habit.description}
+                </p>
+              )}
             </div>
           )}
 

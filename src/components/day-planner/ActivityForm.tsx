@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import LexicalEditor from '@/components/common/LexicalEditor';
-import { X, Sparkles, Plus, Check } from 'lucide-react';
+import { X, Sparkles, Plus, Minus, Check, Clock, Timer } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ActivityFormProps {
@@ -29,10 +28,31 @@ export default function ActivityForm({
   onSubmit,
   initialData,
 }: ActivityFormProps) {
+  const initialDuration = initialData?.durationMinutes || 60;
   const [title, setTitle] = useState(initialData?.title || '');
-  const [notes, setNotes] = useState(initialData?.notes || '');
-  const [durationMinutes, setDurationMinutes] = useState(initialData?.durationMinutes || 60);
+  const [hours, setHours] = useState(Math.floor(initialDuration / 60));
+  const [minutes, setMinutes] = useState(initialDuration % 60);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const totalMinutes = Number(hours) * 60 + Number(minutes);
+
+  const formatDurationText = (mins: number) => {
+    if (mins <= 0) return '0 mins';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h > 0 && m > 0) return `${h} ${h === 1 ? 'hr' : 'hrs'} ${m} ${m === 1 ? 'min' : 'mins'}`;
+    if (h > 0) return `${h} ${h === 1 ? 'hr' : 'hrs'}`;
+    return `${m} ${m === 1 ? 'min' : 'mins'}`;
+  };
+
+  const getCalculatedTimeRange = () => {
+    if (!suggestedStartTime) return '';
+    const start = new Date(suggestedStartTime);
+    const end = new Date(start.getTime() + (totalMinutes > 0 ? totalMinutes : 0) * 60000);
+    const formatTime = (d: Date) =>
+      d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    return `${formatTime(start)} — ${formatTime(end)}`;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,15 +62,19 @@ export default function ActivityForm({
       return;
     }
 
+    if (totalMinutes <= 0) {
+      toast.error('Duration must be at least 1 minute');
+      return;
+    }
+
     const startDate = new Date(suggestedStartTime);
-    const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+    const endDate = new Date(startDate.getTime() + totalMinutes * 60000);
 
     setIsSubmitting(true);
     try {
       await onSubmit({
         plannerId,
         title,
-        notes,
         startTime: startDate.toISOString(),
         endTime: endDate.toISOString(),
       });
@@ -127,45 +151,151 @@ export default function ActivityForm({
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="duration-select"
-              className="mb-1.5 block text-sm font-semibold text-foreground"
-            >
-              Duration
-            </label>
-            <select
-              id="duration-select"
-              value={durationMinutes}
-              onChange={(e) => setDurationMinutes(Number(e.target.value))}
-              className="w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              disabled={isSubmitting}
-            >
-              <option value={15}>15 minutes</option>
-              <option value={30}>30 minutes</option>
-              <option value={45}>45 minutes</option>
-              <option value={60}>1 hour</option>
-              <option value={90}>1.5 hours</option>
-              <option value={120}>2 hours</option>
-              <option value={150}>2.5 hours</option>
-              <option value={180}>3 hours</option>
-              <option value={240}>4 hours</option>
-              {initialData &&
-                ![15, 30, 45, 60, 90, 120, 150, 180, 240].includes(initialData.durationMinutes) && (
-                  <option value={initialData.durationMinutes}>
-                    {Math.floor(initialData.durationMinutes / 60)}h{' '}
-                    {initialData.durationMinutes % 60}m
-                  </option>
-                )}
-            </select>
-          </div>
+          {/* Duration Section */}
+          <div className="rounded-xl border border-border bg-surface-muted/50 p-4 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Clock size={16} className="text-primary" />
+                Duration
+              </label>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-semibold text-foreground">
-              Notes (Optional)
-            </label>
-            <div className="rounded-lg border border-border bg-surface overflow-hidden min-h-40">
-              <LexicalEditor initialContent={notes} onChange={setNotes} />
+              {/* Time Range Preview Badge */}
+              <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-text-muted shadow-sm">
+                <Timer size={13} className="text-primary" />
+                <span>{getCalculatedTimeRange()}</span>
+                <span className="text-foreground font-semibold">
+                  ({formatDurationText(totalMinutes)})
+                </span>
+              </div>
+            </div>
+
+            {/* Stepper Inputs for Hours & Minutes */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Hours Stepper */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-text-muted">Hours</span>
+                <div className="flex items-center rounded-lg border border-border bg-surface p-1 transition-colors focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <button
+                    type="button"
+                    onClick={() => setHours((h) => Math.max(0, h - 1))}
+                    disabled={hours <= 0 || isSubmitting}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-foreground transition-colors hover:bg-surface-hover active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                    aria-label="Decrease hours"
+                  >
+                    <Minus size={15} />
+                  </button>
+
+                  <div className="relative flex-1 flex items-center justify-center">
+                    <input
+                      type="number"
+                      min={0}
+                      max={24}
+                      value={hours}
+                      onChange={(e) => setHours(Math.max(0, parseInt(e.target.value) || 0))}
+                      className="w-full bg-transparent text-center text-sm font-semibold text-foreground focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      disabled={isSubmitting}
+                    />
+                    <span className="text-xs font-medium text-text-muted pr-2">hrs</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setHours((h) => Math.min(24, h + 1))}
+                    disabled={hours >= 24 || isSubmitting}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-foreground transition-colors hover:bg-surface-hover active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                    aria-label="Increase hours"
+                  >
+                    <Plus size={15} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Minutes Stepper */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs font-medium text-text-muted">Minutes</span>
+                <div className="flex items-center rounded-lg border border-border bg-surface p-1 transition-colors focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (minutes >= 5) setMinutes(minutes - 5);
+                      else if (minutes > 0) setMinutes(0);
+                      else if (hours > 0) {
+                        setHours(hours - 1);
+                        setMinutes(55);
+                      }
+                    }}
+                    disabled={(hours === 0 && minutes === 0) || isSubmitting}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-foreground transition-colors hover:bg-surface-hover active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                    aria-label="Decrease minutes"
+                  >
+                    <Minus size={15} />
+                  </button>
+
+                  <div className="relative flex-1 flex items-center justify-center">
+                    <input
+                      type="number"
+                      min={0}
+                      max={59}
+                      value={minutes}
+                      onChange={(e) => setMinutes(Math.max(0, parseInt(e.target.value) || 0))}
+                      className="w-full bg-transparent text-center text-sm font-semibold text-foreground focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      disabled={isSubmitting}
+                    />
+                    <span className="text-xs font-medium text-text-muted pr-2">mins</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (minutes + 5 >= 60) {
+                        setHours(hours + 1);
+                        setMinutes((minutes + 5) % 60);
+                      } else {
+                        setMinutes(minutes + 5);
+                      }
+                    }}
+                    disabled={isSubmitting}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-foreground transition-colors hover:bg-surface-hover active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                    aria-label="Increase minutes"
+                  >
+                    <Plus size={15} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-xs font-medium text-text-muted mr-1">Presets:</span>
+              {[
+                { label: '15m', mins: 15 },
+                { label: '25m', mins: 25 },
+                { label: '30m', mins: 30 },
+                { label: '45m', mins: 45 },
+                { label: '1h', mins: 60 },
+                { label: '1.5h', mins: 90 },
+                { label: '2h', mins: 120 },
+                { label: '3h', mins: 180 },
+              ].map((preset) => {
+                const isSelected = totalMinutes === preset.mins;
+                return (
+                  <button
+                    key={preset.mins}
+                    type="button"
+                    onClick={() => {
+                      setHours(Math.floor(preset.mins / 60));
+                      setMinutes(preset.mins % 60);
+                    }}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                      isSelected
+                        ? 'bg-primary text-white shadow-sm scale-105'
+                        : 'border border-border bg-surface text-text-muted hover:border-primary/50 hover:text-foreground'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
