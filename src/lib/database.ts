@@ -19,7 +19,9 @@ const pool = new Pool({
 const adapter = new PrismaPg(pool);
 
 export const prisma =
-  globalForPrisma.prisma ??
+  (globalForPrisma.prisma && 'architecture' in globalForPrisma.prisma
+    ? globalForPrisma.prisma
+    : undefined) ??
   new PrismaClient({
     adapter,
 

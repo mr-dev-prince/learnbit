@@ -11,6 +11,7 @@ import {
   Plus,
   CalendarDays,
   Map,
+  Layers,
 } from 'lucide-react';
 import LogoutButton from '@/components/auth/LogoutButton';
 import CollapseButton from '@/components/ui/CollapseButton';
@@ -86,6 +87,12 @@ const Sidebar: React.FC = () => {
       label: 'Roadmaps',
       icon: <Map size={20} />,
       href: '/roadmaps',
+    },
+    {
+      id: 'architectures',
+      label: 'Architectures',
+      icon: <Layers size={20} />,
+      href: '/architectures',
     },
     { id: 'completed', label: 'Completed', icon: <CheckCircle size={20} />, href: '/completed' },
     { id: 'settings', label: 'Settings', icon: <Settings size={20} />, href: '/settings' },

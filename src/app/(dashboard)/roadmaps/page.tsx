@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import RoadmapCard from '@/components/roadmaps/RoadmapCard';
@@ -66,13 +67,33 @@ export default function RoadmapsPage() {
             Track your long-term learning goals and milestones.
           </p>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-all duration-200 active:scale-95"
-        >
-          <Plus size={16} className="mr-2" />
-          New Roadmap
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/architectures"
+            className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground shadow-xs hover:border-primary/50 hover:bg-surface-hover transition-all duration-200 active:scale-95 group"
+            title="Open Password-Protected Architecture Hub"
+          >
+            <span className="p-1 rounded bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="M3 9h18"/>
+                <path d="M9 21V9"/>
+              </svg>
+            </span>
+            <span>Architectures</span>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase tracking-wider">
+              Vault
+            </span>
+          </Link>
+
+          <button
+            onClick={() => handleOpenModal()}
+            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 transition-all duration-200 active:scale-95"
+          >
+            <Plus size={16} className="mr-2" />
+            New Roadmap
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
