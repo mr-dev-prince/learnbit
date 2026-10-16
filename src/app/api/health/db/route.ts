@@ -1,23 +1,11 @@
 import { apiHandler } from '@/lib/api/handler';
 import { ApiResponse } from '@/lib/api/response';
 
-import { prisma } from '@/lib/database';
+import { checkDatabaseHealth } from '@/lib/db-health';
 
 export const GET = () =>
   apiHandler(async () => {
-    const start = performance.now();
+    const health = await checkDatabaseHealth();
 
-    await prisma.$queryRaw`SELECT 1`;
-
-    const duration = Number((performance.now() - start).toFixed(2));
-
-    return new ApiResponse(
-      {
-        status: 'healthy',
-        database: 'connected',
-        latency: `${duration} ms`,
-        timestamp: new Date().toISOString(),
-      },
-      'Database connection is healthy',
-    );
+    return new ApiResponse(health, 'Database connection is healthy');
   });

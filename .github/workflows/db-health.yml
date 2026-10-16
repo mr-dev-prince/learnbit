@@ -1,0 +1,22 @@
+name: DB health check
+
+# Vercel Hobby only allows daily cron jobs, so the 3-hourly schedule runs here instead.
+on:
+  schedule:
+    - cron: '0 */3 * * *' # every 3 hours (UTC)
+  workflow_dispatch:
+
+jobs:
+  db-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping /api/cron/db-health
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --retry 3 --retry-delay 10 --max-time 60 \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "${APP_URL%/}/api/cron/db-health"

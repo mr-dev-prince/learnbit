@@ -217,7 +217,8 @@ Below are the main API endpoints to be implemented (update as development progre
 - `POST /api/courses` - Create course (admin only)
 - `GET /api/courses/[id]` - Get course details
 - `PUT /api/courses/[id]` - Update course (admin only)
-- `GET /api/health` - Health check
+- `GET /api/health/db` - Database health check
+- `GET /api/cron/db-health` - Scheduled health check of Aiven and Supabase; keeps the Supabase free project from pausing (GitHub Actions, every 3 hours; requires `Authorization: Bearer $CRON_SECRET`)
 
 ---
 
